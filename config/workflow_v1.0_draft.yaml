@@ -1,0 +1,86 @@
+# Reproducibility configuration draft for china_rural_income_1km_2019_2023_v1.0-draft
+
+project:
+  name: china_rural_income_1km_2019_2023
+  version: v1.0-draft
+  frozen_on: 2026-07-19
+  study_years: [2019, 2020, 2021, 2022, 2023]
+  price_base_year: 2019
+  main_mask: strict
+  main_product: unbounded
+
+paths:
+  data_dir: data
+  feature_dir: features
+  output_dir: outputs
+  product_dir: outputs/stage6_scientific_data_product
+  processed_dir: data/processed
+
+rural_definition:
+  source: GHS-SMOD 2020
+  strict_codes: [11, 12, 13]
+  broad_codes: [11, 12, 13, 21]
+  main_analysis: strict
+
+population_weights:
+  source: WorldPop Global Demographic Data (Global 2), China, 1 km, R2025A UA v1
+  doi: https://doi.org/10.5258/SOTON/WP00840
+  years: [2019, 2020, 2021, 2022, 2023]
+
+income_target:
+  county_income:
+    availability: local_third_party_not_redistributed
+    role: weak_supervision_county_aggregate_label
+  province_income:
+    source: National Bureau of Statistics of China, National Data
+    indicator: 农村居民人均可支配收入(元)
+    role: province_year_calibration_constraint
+  cpi:
+    source: National Bureau of Statistics of China, National Data
+    indicator: 居民消费价格指数(上年=100)
+    role: deflate_nominal_income_to_2019_constant_yuan
+
+model:
+  weak_supervised_downscaling:
+    benchmark_year: 2020
+    mask: strict
+    folds: 5
+    pixels_per_county: 128
+    epochs_main_2020: 180
+    lr: 0.001
+    threads: 8
+  spatiotemporal_validation:
+    run: all
+    year: 2020
+    mask: strict
+    province_folds: 5
+    province_pixels: 128
+    year_pixels: 64
+    epochs_spatiotemporal_validation: 150
+    epochs: 150
+    lr: 0.001
+    threads: 8
+  final_maps:
+    years: [2019, 2020, 2021, 2022, 2023]
+    pixels_per_county: 128
+    epochs: 150
+    lr: 0.001
+    threads: 8
+    row_block: 128
+    reuse_model: false
+  ensemble_uncertainty:
+    members: 5
+    seeds: [1042, 2039, 3036, 4033, 5030]
+    years: [2019, 2020, 2021, 2022, 2023]
+    pixels_per_county: 128
+    epochs: 150
+    lr: 0.001
+    threads: 8
+    row_block: 128
+
+excluded_from_public_release:
+  - county_level_raw_income_tables
+  - purchased_county_boundaries
+  - raw_nbs_excel_workbooks
+  - raw_osm_pbf
+  - third_party_raw_data_with_unclear_redistribution_terms

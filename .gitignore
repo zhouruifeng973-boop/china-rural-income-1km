@@ -1,0 +1,26 @@
+# Restricted and purchased inputs
+data/private_inputs_not_redistributed/
+data/county_rural_income_*.csv
+data/CNT_ResidentIncome.xlsx
+data/2020xianBJ/
+data/osm/*.pbf
+
+# Large local products and intermediates
+features/
+outputs/
+output/
+tmp/
+*.tif
+*.tiff
+*.ovr
+*.aux.xml
+
+# Python and editor state
+__pycache__/
+*.pyc
+.venv/
+.vscode/
+.idea/
+*.lock
+*.tmp
+*.bak

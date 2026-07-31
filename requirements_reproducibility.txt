@@ -1,0 +1,26 @@
+# Core dependencies for reproducing the v1.0-draft stage2-stage9 workflow.
+# Install in a clean environment before running the reproducibility pipeline.
+
+numpy
+pandas
+openpyxl
+xlrd
+rasterio
+scikit-learn
+torch
+xgboost
+PyYAML
+
+# Optional dependencies used by historical/supplementary scripts.
+# Install only if running road extraction, spatial autocorrelation, plotting,
+# HTML reporting, or legacy analysis scripts.
+
+scipy
+tqdm
+matplotlib
+markdown
+geopandas
+shapely
+libpysal
+esda
+osmium

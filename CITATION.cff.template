@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the archived code release and the associated dataset."
+title: "Reproducible workflow for a 1 km gridded rural-income dataset of China, 2019–2023"
+type: software
+license: MIT
+authors:
+  - family-names: "Wu"
+    given-names: "Shaohua"
+    affiliation: "Zhejiang University of Finance and Economics"
+    email: "shaohuawu@126.com"
+  - family-names: "Zhou"
+    given-names: "Ruifeng"
+    affiliation: "Zhejiang University of Finance and Economics"
+    orcid: "https://orcid.org/0009-0009-9678-2927"
+version: "v1.0.0"
+date-released: "[YYYY-MM-DD]"
+doi: "[ARCHIVED CODE DOI]"
+repository-code: "[PUBLIC CODE REPOSITORY URL]"
+keywords:
+  - rural income
+  - remote sensing
+  - weak supervision
+  - gridded socioeconomic data
+  - China
