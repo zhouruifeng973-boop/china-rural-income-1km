@@ -74,14 +74,20 @@ TARGET_CRS = (
     "+datum=WGS84 +units=m +no_defs"
 )
 
-# Main-map geographic frame. The South China Sea is shown separately in the
-# legend panel so the mainland panels retain enough spatial detail.
+# Main-map geographic frame for the released mainland-China data product.
 MAIN_LONLAT_BOUNDS = (73.0, 17.0, 136.0, 54.5)
 
-# Draft internal boundary source. Its redistribution/use permission must be
-# checked before the final submitted figure is frozen.
-PROVINCE_SHP = ROOT / "data" / "2020xianBJ" / "省.shp"
-NINE_DASH_SHP = ROOT / "data" / "2020xianBJ" / "九段线.shp"
+# Publication-safe cartographic context. These public display boundaries do
+# not replace the county geometry used by the modelling workflow.
+BOUNDARY_ROOT = ROOT / "data" / "public_boundaries" / "geoboundaries_CHN_2019"
+COUNTRY_SHP = BOUNDARY_ROOT / "ADM0" / "geoBoundaries-CHN-ADM0.shp"
+PROVINCE_SHP = BOUNDARY_ROOT / "ADM1" / "geoBoundaries-CHN-ADM1.shp"
+BOUNDARY_CITATION = (
+    "Runfola et al. (2020), geoBoundaries: A global database of political "
+    "administrative boundaries, PLOS ONE 15:e0231866."
+)
+BOUNDARY_DOI = "https://doi.org/10.1371/journal.pone.0231866"
+BOUNDARY_LICENSE = "Public Domain source layers; geoBoundaries attribution supplied."
 
 PANEL_W = 1400
 PANEL_H = 850
@@ -302,10 +308,7 @@ def lonlat_to_inset(
     return x, y
 
 
-def make_legend_panel(
-    province_parts_lonlat: list[list[tuple[float, float]]],
-    nine_dash_parts_lonlat: list[list[tuple[float, float]]],
-) -> Image.Image:
+def make_legend_panel() -> Image.Image:
     panel = Image.new("RGB", (PANEL_W, PANEL_H), OUTSIDE_RGB)
     draw = ImageDraw.Draw(panel)
     draw.rectangle((0, 0, PANEL_W - 1, PANEL_H - 1), outline=PANEL_BORDER_RGB, width=2)
@@ -332,29 +335,21 @@ def make_legend_panel(
     )
     draw.text((label_x, nodata_y + 1), "No valid rural estimate", font=FONT_LEGEND, fill=TEXT_RGB)
 
-    inset_rect = (690, 175, 1320, 650)
-    inset_bounds = (105.0, 3.0, 125.0, 25.0)
-    inset_w = inset_rect[2] - inset_rect[0]
-    inset_h = inset_rect[3] - inset_rect[1]
-    inset = Image.new("RGB", (inset_w, inset_h), (250, 251, 252))
-    inset_draw = ImageDraw.Draw(inset)
-    local_rect = (0, 0, inset_w - 1, inset_h - 1)
-    for part in province_parts_lonlat:
-        pts = [lonlat_to_inset(p, local_rect, inset_bounds) for p in part]
-        if len(pts) >= 2:
-            inset_draw.line(pts, fill=COUNTRY_LINE_RGB, width=2, joint="curve")
-    for part in nine_dash_parts_lonlat:
-        pts = [lonlat_to_inset(p, local_rect, inset_bounds) for p in part]
-        if len(pts) >= 2:
-            inset_draw.line(pts, fill=COUNTRY_LINE_RGB, width=3, joint="curve")
-    inset_draw.rectangle(local_rect, outline=PANEL_BORDER_RGB, width=2)
-    panel.paste(inset, (inset_rect[0], inset_rect[1]))
-    draw.text((700, 135), "South China Sea inset", font=FONT_NOTE, fill=TEXT_RGB)
+    scope_x, scope_y = 680, 185
+    draw.rounded_rectangle(
+        (scope_x, scope_y, 1325, 535), radius=18, fill=(248, 250, 251),
+        outline=PANEL_BORDER_RGB, width=2,
+    )
+    draw.text((scope_x + 36, scope_y + 35), "Study-area scope", font=FONT_LEGEND_TITLE, fill=TEXT_RGB)
+    draw.text((scope_x + 36, scope_y + 105), "The released income product covers", font=FONT_NOTE, fill=MUTED_RGB)
+    draw.text((scope_x + 36, scope_y + 145), "mainland China. Hong Kong, Macao,", font=FONT_NOTE, fill=MUTED_RGB)
+    draw.text((scope_x + 36, scope_y + 185), "and Taiwan are outside the product", font=FONT_NOTE, fill=MUTED_RGB)
+    draw.text((scope_x + 36, scope_y + 225), "coverage and are not interpreted.", font=FONT_NOTE, fill=MUTED_RGB)
 
-    note_y = 695
+    note_y = 730
     draw.text((65, note_y), "All panels use the strict rural mask and unbounded", font=FONT_NOTE, fill=MUTED_RGB)
-    draw.text((65, note_y + 38), "province-calibrated canonical products.", font=FONT_NOTE, fill=MUTED_RGB)
-    draw.text((65, note_y + 92), "Projection: China Albers equal-area conic", font=FONT_SMALL, fill=MUTED_RGB)
+    draw.text((65, note_y + 36), "province-calibrated canonical products.", font=FONT_NOTE, fill=MUTED_RGB)
+    draw.text((65, note_y + 75), "Projection: China Albers equal-area conic", font=FONT_SMALL, fill=MUTED_RGB)
     return panel
 
 
@@ -367,12 +362,11 @@ def paste_panel(canvas: Image.Image, panel: Image.Image, col: int, row: int) -> 
 def main() -> None:
     FIGURE_DIR.mkdir(parents=True, exist_ok=True)
     input_paths = {year: INCOME_DIR / INPUT_TEMPLATE.format(year=year) for year in YEARS}
-    missing = [str(path) for path in list(input_paths.values()) + [PROVINCE_SHP, NINE_DASH_SHP] if not path.exists()]
+    missing = [str(path) for path in list(input_paths.values()) + [COUNTRY_SHP, PROVINCE_SHP] if not path.exists()]
     if missing:
         raise FileNotFoundError("Missing Figure 2 input(s):\n" + "\n".join(missing))
 
     province_parts_lonlat = read_shapefile_parts(PROVINCE_SHP)
-    nine_dash_parts_lonlat = read_shapefile_parts(NINE_DASH_SHP)
     projected_provinces = project_parts(province_parts_lonlat)
     bounds, grid_transform = main_target_grid()
 
@@ -392,7 +386,7 @@ def main() -> None:
         paste_panel(canvas, panel, col, row)
         summaries.append(summary)
 
-    legend_panel = make_legend_panel(province_parts_lonlat, nine_dash_parts_lonlat)
+    legend_panel = make_legend_panel()
     paste_panel(canvas, legend_panel, 2, 1)
 
     png_path = FIGURE_DIR / "figure2_annual_income_2019_2023.png"
@@ -413,8 +407,15 @@ def main() -> None:
         "class_labels": CLASS_LABELS,
         "class_rgb": CLASS_RGB,
         "nodata_land_rgb": NODATA_LAND_RGB,
-        "boundary_source_internal_draft": str(PROVINCE_SHP.relative_to(ROOT)).replace("\\", "/"),
-        "boundary_license_action": "Verify publication permission or replace before submission.",
+        "display_boundary_sources": [
+            str(COUNTRY_SHP.relative_to(ROOT)).replace("\\", "/"),
+            str(PROVINCE_SHP.relative_to(ROOT)).replace("\\", "/"),
+        ],
+        "display_boundary_year": 2019,
+        "display_boundary_citation": BOUNDARY_CITATION,
+        "display_boundary_doi": BOUNDARY_DOI,
+        "display_boundary_license": BOUNDARY_LICENSE,
+        "study_area_note": "Released data product covers mainland China; Hong Kong, Macao and Taiwan are outside product coverage.",
         "panels": summaries,
         "outputs": [
             str(png_path.relative_to(ROOT)).replace("\\", "/"),

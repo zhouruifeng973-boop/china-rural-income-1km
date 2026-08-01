@@ -29,10 +29,12 @@ from rasterio.transform import from_bounds
 from rasterio.warp import reproject, transform_bounds
 
 from create_figure2_annual_income import (
-    COUNTRY_LINE_RGB,
+    BOUNDARY_CITATION,
+    BOUNDARY_DOI,
+    BOUNDARY_LICENSE,
+    COUNTRY_SHP,
     MAIN_LONLAT_BOUNDS,
     MUTED_RGB,
-    NINE_DASH_SHP,
     NODATA_LAND_RGB,
     OUTSIDE_RGB,
     PANEL_BORDER_RGB,
@@ -183,22 +185,6 @@ def lonlat_to_local(point, size, bounds):
     )
 
 
-def south_china_sea_inset(province_parts, nine_dash_parts, width=300, height=245) -> Image.Image:
-    inset = Image.new("RGB", (width, height), (250, 251, 252))
-    draw = ImageDraw.Draw(inset)
-    inset_bounds = (105.0, 3.0, 125.0, 25.0)
-    for part in province_parts:
-        points = [lonlat_to_local(point, (width, height), inset_bounds) for point in part]
-        if len(points) >= 2:
-            draw.line(points, fill=COUNTRY_LINE_RGB, width=2, joint="curve")
-    for part in nine_dash_parts:
-        points = [lonlat_to_local(point, (width, height), inset_bounds) for point in part]
-        if len(points) >= 2:
-            draw.line(points, fill=COUNTRY_LINE_RGB, width=3, joint="curve")
-    draw.rectangle((0, 0, width - 1, height - 1), outline=PANEL_BORDER_RGB, width=2)
-    return inset
-
-
 def draw_map_legend(draw, labels, colours, y: int, title: str) -> None:
     draw.text((70, y), title, font=FONT_NOTE, fill=MUTED_RGB)
     y0 = y + 46
@@ -223,8 +209,6 @@ def make_map_panel(
     bounds,
     grid_transform,
     projected_provinces,
-    province_parts,
-    nine_dash_parts,
 ) -> tuple[Image.Image, dict[str, object]]:
     panel = Image.new("RGB", (PANEL_W, MAP_PANEL_H), OUTSIDE_RGB)
     map_image = Image.new("RGB", (MAP_W, MAP_H), OUTSIDE_RGB)
@@ -242,10 +226,7 @@ def make_map_panel(
     title_box = draw.textbbox((0, 0), title, font=FONT_TITLE)
     draw.text(((PANEL_W - (title_box[2] - title_box[0])) / 2, 26), title, font=FONT_TITLE, fill=TEXT_RGB)
 
-    inset = south_china_sea_inset(province_parts, nine_dash_parts)
-    inset_x, inset_y = PANEL_W - inset.width - 55, 690
-    panel.paste(inset, (inset_x, inset_y))
-    draw.text((inset_x, inset_y - 35), "South China Sea inset", font=FONT_NOTE, fill=TEXT_RGB)
+    draw.text((MAP_W - 405, 952), "Study area: mainland China", font=FONT_NOTE, fill=MUTED_RGB)
 
     if kind == "quality":
         draw_map_legend(draw, QUALITY_LABELS, QUALITY_RGB, 1010, "Quality-risk class (higher = greater caution)")
@@ -368,7 +349,7 @@ def draw_cv_chart(draw: ImageDraw.ImageDraw, left: int, top: int, rows: list[dic
 
 
 def main() -> None:
-    inputs = [QUALITY_CLASS_2023, CV_2023, QUALITY_SUMMARY, ENSEMBLE_SUMMARY, PROVINCE_SHP, NINE_DASH_SHP]
+    inputs = [QUALITY_CLASS_2023, CV_2023, QUALITY_SUMMARY, ENSEMBLE_SUMMARY, COUNTRY_SHP, PROVINCE_SHP]
     missing = [str(path) for path in inputs if not path.exists()]
     if missing:
         raise FileNotFoundError("Missing Figure 5 input(s):\n" + "\n".join(missing))
@@ -377,17 +358,16 @@ def main() -> None:
     quality_rows = read_csv_rows(QUALITY_SUMMARY)
     ensemble_rows = read_csv_rows(ENSEMBLE_SUMMARY)
     province_parts = read_shapefile_parts(PROVINCE_SHP)
-    nine_dash_parts = read_shapefile_parts(NINE_DASH_SHP)
     projected_provinces = project_parts(province_parts)
     bounds, grid_transform = target_grid()
 
     panel_a, map_a_qa = make_map_panel(
         "a", "Quality-risk class, 2023", QUALITY_CLASS_2023, "quality", bounds, grid_transform,
-        projected_provinces, province_parts, nine_dash_parts,
+        projected_provinces,
     )
     panel_b, map_b_qa = make_map_panel(
         "b", "Ensemble coefficient of variation, 2023", CV_2023, "cv", bounds, grid_transform,
-        projected_provinces, province_parts, nine_dash_parts,
+        projected_provinces,
     )
 
     canvas = Image.new("RGB", (CANVAS_W, CANVAS_H), OUTSIDE_RGB)
@@ -439,8 +419,15 @@ def main() -> None:
             "ensemble_cv": "Five-member model/sampling spread after province calibration, not pixel-level validation error.",
             "confidence_interval": False,
         },
-        "boundary_source_internal_draft": str(PROVINCE_SHP.relative_to(ROOT)).replace("\\", "/"),
-        "boundary_license_action": "Verify publication permission or replace before submission.",
+        "display_boundary_sources": [
+            str(COUNTRY_SHP.relative_to(ROOT)).replace("\\", "/"),
+            str(PROVINCE_SHP.relative_to(ROOT)).replace("\\", "/"),
+        ],
+        "display_boundary_year": 2019,
+        "display_boundary_citation": BOUNDARY_CITATION,
+        "display_boundary_doi": BOUNDARY_DOI,
+        "display_boundary_license": BOUNDARY_LICENSE,
+        "study_area_note": "Released data product covers mainland China; Hong Kong, Macao and Taiwan are outside product coverage.",
         "outputs": [str(PNG_PATH.relative_to(ROOT)).replace("\\", "/"), str(TIFF_PATH.relative_to(ROOT)).replace("\\", "/")],
     }
     QA_PATH.write_text(json.dumps(qa, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

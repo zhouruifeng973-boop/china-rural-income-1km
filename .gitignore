@@ -3,6 +3,9 @@ data/private_inputs_not_redistributed/
 data/county_rural_income_*.csv
 data/CNT_ResidentIncome.xlsx
 data/2020xianBJ/
+data/public_boundaries/geoboundaries_CHN_2019/ADM0/
+data/public_boundaries/geoboundaries_CHN_2019/ADM1/
+data/public_boundaries/geoboundaries_CHN_2019/downloads/
 data/osm/*.pbf
 data/corrections/
 *.xls
