@@ -15,6 +15,7 @@ Quality layers created:
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import sys
 from pathlib import Path
@@ -36,6 +37,7 @@ TABLES = PACKAGE / "tables"
 METADATA = PACKAGE / "metadata"
 FEATURES = ROOT / "features"
 PROCESSED = ROOT / "data" / "processed"
+TARGET = PROCESSED / "county_income_2019_2023_deflated.csv"
 
 YEARS = [2019, 2020, 2021, 2022, 2023]
 NODATA_FLOAT = -9999.0
@@ -82,7 +84,7 @@ def quality_profile(src, dtype: str, nodata, predictor: int | None = None):
 
 
 def load_training_provinces() -> dict[int, set[int]]:
-    county = pd.read_csv(PROCESSED / "county_income_2019_2023_deflated.csv")
+    county = pd.read_csv(TARGET)
     county["province_code"] = (county["county_code"].astype(int) // 10000) * 10000
     result = {}
     for year, group in county.groupby("year"):
@@ -317,6 +319,22 @@ def write_quality_readme(summary: pd.DataFrame, common: dict) -> None:
 
 
 def main() -> None:
+    global STAGE5, PACKAGE, QUALITY, TABLES, METADATA, TARGET
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--stage5-root", type=Path, default=STAGE5)
+    parser.add_argument("--package-root", type=Path, default=PACKAGE)
+    parser.add_argument("--target-path", type=Path, default=TARGET)
+    args = parser.parse_args()
+    STAGE5 = args.stage5_root.resolve()
+    PACKAGE = args.package_root.resolve()
+    TARGET = args.target_path.resolve()
+    QUALITY = PACKAGE / "data" / "quality_layers"
+    TABLES = PACKAGE / "tables"
+    METADATA = PACKAGE / "metadata"
+    if not TARGET.is_file():
+        raise FileNotFoundError(TARGET)
+    TABLES.mkdir(parents=True, exist_ok=True)
+    METADATA.mkdir(parents=True, exist_ok=True)
     QUALITY.mkdir(parents=True, exist_ok=True)
     training_provinces = load_training_provinces()
     summaries = []

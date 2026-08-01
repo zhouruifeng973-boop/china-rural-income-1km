@@ -1,0 +1,58 @@
+{
+  "project": {
+    "name": "china_rural_income_1km_2019_2023",
+    "version": "v1.3-official44-corrected",
+    "run_role": "final_candidate",
+    "label_description": "2019—2023年县级农村收入官方来源核验44条修正版",
+    "study_years": [2019, 2020, 2021, 2022, 2023],
+    "price_base_year": 2019,
+    "main_mask": "strict",
+    "main_product": "unbounded"
+  },
+  "paths": {
+    "corrected_county_income": "data/corrections/county_income_2019_2023_deflated_official44_corrected_v3.csv",
+    "output_root": "outputs/official44_corrected_full_rerun_v3",
+    "stage8_package_root": "outputs/official44_corrected_stage8_v3/package",
+    "stage8_model_root": "outputs/official44_corrected_stage8_v3/models"
+  },
+  "model": {
+    "spatiotemporal_validation": {
+      "run": "all",
+      "year": 2020,
+      "mask": "strict",
+      "province_folds": 5,
+      "province_pixels": 128,
+      "year_pixels": 64,
+      "epochs": 150,
+      "lr": 0.001,
+      "threads": 8
+    },
+    "final_maps": {
+      "years": [2019, 2020, 2021, 2022, 2023],
+      "pixels_per_county": 128,
+      "epochs": 150,
+      "lr": 0.001,
+      "threads": 8,
+      "row_block": 128,
+      "reuse_model": false
+    },
+    "ensemble_uncertainty": {
+      "members": 5,
+      "seeds": [1042, 2039, 3036, 4033, 5030],
+      "years": [2019, 2020, 2021, 2022, 2023],
+      "pixels_per_county": 128,
+      "epochs": 150,
+      "lr": 0.001,
+      "threads": 8,
+      "row_block": 128
+    }
+  },
+  "correction_scope": {
+    "total_corrected_records": 44,
+    "latest_stage_records": 15,
+    "latest_stage_locations": ["广州市", "洛阳市"],
+    "official_workbook_matches_after_correction": 96,
+    "unreviewed_high_priority_records": 0,
+    "original_files_overwritten": false
+  }
+}

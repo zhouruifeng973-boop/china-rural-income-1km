@@ -9,6 +9,7 @@ basic command construction still work.
 from __future__ import annotations
 
 from copy import deepcopy
+import json
 from pathlib import Path
 import sys
 from typing import Any
@@ -111,20 +112,25 @@ def load_config(path: str | Path | None = None) -> dict[str, Any]:
     if not config_path.exists():
         return config
 
-    add_local_dependency_paths()
-    try:
-        import yaml  # type: ignore
-    except Exception:
-        return config
-
-    loaded = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+    if config_path.suffix.lower() == ".json":
+        loaded = json.loads(config_path.read_text(encoding="utf-8"))
+        parser_name = "json"
+    else:
+        add_local_dependency_paths()
+        try:
+            import yaml  # type: ignore
+        except Exception:
+            return config
+        loaded = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+        parser_name = "yaml"
     if not isinstance(loaded, dict):
         raise ValueError(f"Config file must contain a mapping: {config_path}")
     config = deep_update(config, loaded)
     config["_meta"] = {
         "config_path": str(config_path),
-        "yaml_available": True,
+        "yaml_available": parser_name == "yaml",
         "loaded_from_file": True,
+        "parser": parser_name,
     }
     return config
 

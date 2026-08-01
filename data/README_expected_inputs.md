@@ -1,6 +1,6 @@
 # Expected local inputs
 
-The repository intentionally contains no research input data. Users must supply inputs locally and update the paths expected by `config/workflow_v1.0_draft.yaml`.
+The repository intentionally contains no research input data. Users must supply inputs locally and update the paths expected by `config/workflow_v1.3_official44_corrected.yaml` (or use the retained historical `workflow_v1.0_draft.yaml`).
 
 Input categories include:
 
@@ -12,3 +12,5 @@ Input categories include:
 - administrative geometries or a county-ID raster used for aggregation.
 
 Purchased or licence-restricted inputs must not be committed to this repository. Run `scripts/check_reproducibility_inputs.py` before executing the full workflow.
+
+For v1.3, the configuration expects the locally supplied versioned target `data/corrections/county_income_2019_2023_deflated_official44_corrected_v3.csv`. Its filename and expected role are documented for reproducibility, but its records are not redistributed. The public release ZIP contains only derived gridded products, aggregate validation information and metadata.

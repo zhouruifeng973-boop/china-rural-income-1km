@@ -4,6 +4,10 @@ data/county_rural_income_*.csv
 data/CNT_ResidentIncome.xlsx
 data/2020xianBJ/
 data/osm/*.pbf
+data/corrections/
+*.xls
+*.xlsx
+*.pbf
 
 # Large local products and intermediates
 features/
@@ -12,6 +16,14 @@ output/
 tmp/
 *.tif
 *.tiff
+*.zip
+*.7z
+*.rar
+*.pdf
+*.joblib
+*.pkl
+*.pt
+*.pth
 *.ovr
 *.aux.xml
 

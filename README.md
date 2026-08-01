@@ -1,5 +1,7 @@
 # Reproducible workflow for the 1 km rural-income dataset of China, 2019–2023
 
+Current release candidate: **v1.3-official44-corrected**.
+
 This repository contains the code, configuration and documentation used to generate and technically validate a 1 km gridded dataset of rural residents' per capita disposable income in mainland China for 2019–2023.
 
 ## Scope
@@ -19,14 +21,15 @@ python -m pip install -r requirements_reproducibility.txt
 
 ## Safe starting point
 
-The pipeline entry point runs in dry-run mode unless `--execute` is supplied:
+Both pipeline entry points run in dry-run mode unless `--execute` is supplied:
 
 ```bash
 python scripts/check_reproducibility_inputs.py
 python scripts/run_reproducible_pipeline.py
+python scripts/run_v3_final_pipeline.py
 ```
 
-Before an actual model run, review `config/workflow_v1.0_draft.yaml` and the expected-input documentation.
+Before an actual v1.3 model run, review `config/workflow_v1.3_official44_corrected.yaml` and the expected-input documentation. The corrected county-level target named by that configuration is a locally supplied restricted input and is deliberately absent from this repository.
 
 ## Main stages
 
@@ -36,9 +39,10 @@ Before an actual model run, review `config/workflow_v1.0_draft.yaml` and the exp
 4. Province-level calibration.
 5. Annual and change-map generation.
 6. Quality and uncertainty products.
-7. Public-package construction and audit.
+7. Public-package construction, raster/product audit and reproducibility audit.
+8. Deterministic ZIP construction followed by an independent extraction and SHA-256 audit.
 
-An optional internal sensitivity script tests the treatment of 90 audited 2022 income records. It requires the non-redistributed county-level income inputs and does not expose those records in the public code package.
+The Stage 17–18 reconciliation scripts document how selected official-yearbook checks were applied without embedding the checked income values. They require non-redistributed local workbooks and correction tables. The public repository therefore supports method inspection and product auditing, while a complete from-raw-data rerun remains conditional on access to the restricted inputs.
 
 ## Data product
 
@@ -50,4 +54,4 @@ The DOI is not registered and the dataset is not publicly accessible until the Z
 
 ## Licence and citation
 
-The original project code is released under the MIT License. The author order is Shaohua Wu (corresponding author) and Ruifeng Zhou. Ruifeng Zhou's ORCID is https://orcid.org/0009-0009-9678-2927; Shaohua Wu does not currently have an ORCID identifier. The source repository is https://github.com/zhouruifeng973-boop/china-rural-income-1km and remains private during submission preparation. The valid draft citation metadata is stored in `CITATION.cff`; an archived code DOI must be added after the code release by using `CITATION.cff.template` as a reminder.
+The original project code is released under the MIT License. The author order is Shaohua Wu (corresponding author) and Ruifeng Zhou. Ruifeng Zhou's ORCID is https://orcid.org/0009-0009-9678-2927; Shaohua Wu does not currently have an ORCID identifier. The source repository is https://github.com/zhouruifeng973-boop/china-rural-income-1km. The valid citation metadata is stored in `CITATION.cff`; an archived code DOI must be added after the code release by using `CITATION.cff.template` as a reminder.

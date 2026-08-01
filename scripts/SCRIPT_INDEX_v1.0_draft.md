@@ -28,6 +28,14 @@
 | 脚本 | 作用 | 公开边界 |
 |---|---|---|
 | `stage10_income_label_sensitivity.py` | 比较2022年内蒙古90条重分类记录“保留/训练时排除”对留县、留省和留年验证的影响 | 输出含县级收入标签与预测，仅限内部复现和审查，不进入保守公开发布包 |
+| `stage11_hebei_2021_label_sensitivity.py` | 对河北2021年14条疑似沿用上一年值的标签建立不覆盖原始文件的修正版，并在相同分折、模型与随机种子下比较留县和留省验证 | 修正版标签、县级预测和差异表含受限县级收入信息，仅限内部复现和审查；公开稿只可报告汇总敏感性结论 |
+| `stage12_hebei14_full_rerun.py` | 用版本化标签运行留年验证、五年联合弱监督训练、年度图和变化图；支持修正版与同环境原标签对照的隔离输出 | 不覆盖 v1.0；县级预测仅限内部，汇总指标和派生栅格可用于版本决策 |
+| `stage12_compare_correction_only.py` | 逐像元比较同环境修正版与原标签对照版，分离14条修正净效应和历史重跑漂移 | 生成汇总表、审计报告及差值GeoTIFF，不包含县级原始收入值 |
+| `stage13_audit_corrected_stage8.py` | 审查修正版五成员Stage 8的15幅栅格、空间对齐、有效掩膜、校准精度、成员设置和文件哈希 | 生成机器可读审查JSON、逐层CSV和最终审查Markdown |
+| `stage14_nationwide_income_label_audit.py` | 对修正版8,373条县—年标签做全国自动异常筛查和省—年覆盖审查，不自动改值 | 记录级候选含受限收入值，仅限内部；公开材料只可使用汇总统计 |
+| `stage15_extract_hebei_ranked_pdf.py` | 按PDF文字坐标提取河北三栏县级收入排序表，保留位次和原始文字用于人工核验 | 仅适用于带文字层且版式匹配的单页表；提取结果需与整页视觉检查和数值集合比对 |
+| `stage15_reconcile_hebei_2021_official.py` | 修复PDF内嵌字体导致的县名乱码，并将2021年河北官方排序表与训练标签逐县一对一对账 | 只生成差异清单和审计报告，不修改标签；记录级收入值仅限内部 |
+| `stage16_apply_hebei_2021_2022_reconciliation.py` | 在旧版本上应用15条经官方年鉴逐项核验的河北2021—2022修正，重算2019年不变价收入并记录哈希 | 生成新版本，不覆盖任何原始或中间标签；必须通过旧值、县名、行数和唯一键保护检查 |
 
 ## 3. 历史审查/早期实验脚本
 
@@ -84,3 +92,14 @@ scripts/run_reproducible_pipeline.py
 - `tables/county_training_income_2019_2023_2019yuan.csv`
 - `tables/validation_leave_province_2020_county_residuals.csv`
 - `tables/validation_leave_year_county_residuals.csv`
+
+## 7. 官方年鉴标签复核与版本化修正
+
+- `stage17_reconcile_guangzhou_foshan_luoyang.py`：将广州、佛山和洛阳官方年鉴工作簿与版本化县级训练标签逐条对账。只生成内部差异表与修正候选，不改写标签；原始工作簿不进入公开发布包。
+- `stage18_apply_guangzhou_luoyang_official_corrections.py`：将 15 条经官方工作簿核实的广州、洛阳修正应用到新版本，并重算 2019 年不变价收入。生成 v3 标签、修正审计表和哈希清单，不覆盖父版本与证据工作簿。
+- `stage14_nationwide_income_label_audit.py --reviewed-records <CSV>`：可接收一个或多个官方工作簿对账结果，将 `MATCH` 记录标为已核实，避免真实极值继续进入未复核异常队列。
+- `stage19_v3_leave_province_validation.py`：使用版本化县级收入标签执行2020年五折留省验证，并将预测、分折指标、总体指标及哈希清单写入对应版本的独立验证目录。
+- `stage8_ensemble_uncertainty.py`：已支持从版本化配置读取标签、独立包目录和模型目录；v3运行生成5成员、5年份共15幅集成均值/标准差/CV栅格及独立哈希清单。
+- `run_v3_final_pipeline.py`：v3最终链路的安全主入口，默认dry-run，按顺序组织完整重跑、留省验证、集成不确定性、候选包构建、质量图、风险图和最终审查。
+- `stage22_audit_v3_code_reproducibility.py`：检查v3配置、冻结标签哈希、核心脚本语法、依赖声明、dry-run入口、数据审查状态和用户特定绝对路径。
+- `stage23_build_and_audit_v3_zip.py`：以固定目录结构构建 v1.3 最终 ZIP，生成 SHA-256 校验文件，并在独立目录真实解压后逐文件比较大小与哈希，同时复核 ZIP 路径安全、CRC 和内部发布清单；只生成本地待上传文件，不执行 Zenodo 发布。

@@ -24,6 +24,7 @@ import hashlib
 import json
 from pathlib import Path
 import pickle
+import shutil
 import sys
 
 import numpy as np
@@ -44,6 +45,7 @@ from rasterio.windows import Window
 import torch
 
 from repro_config import deep_get, int_list, load_config
+import stage3_weak_supervised_downscaling as weak
 from stage3_spatiotemporal_validation import YEARS, add_year_column, fit_bag_model, sample_year_bags
 from stage3_weak_supervised_downscaling import ROOT, set_seed
 from stage5_final_maps import (
@@ -64,6 +66,24 @@ METADATA = PACKAGE / "metadata"
 MODEL_OUT = ROOT / "outputs" / "stage8_ensemble_uncertainty" / "models"
 FEATURES = ROOT / "features"
 PROCESSED = ROOT / "data" / "processed"
+
+
+def resolve_project_path(value: str | Path) -> Path:
+    path = Path(value)
+    return path if path.is_absolute() else ROOT / path
+
+
+def target_loader(target_path: Path):
+    def load_targets(year: int) -> pd.DataFrame:
+        df = pd.read_csv(target_path)
+        df = df[df["year"].astype(int) == year].copy()
+        df["county_code"] = df["county_code"].astype(int)
+        df = df.dropna(subset=["rural_income_2019yuan", "province_std"])
+        return df[[
+            "year", "county_code", "county", "city", "province_std",
+            "rural_income_nominal", "rural_income_2019yuan",
+        ]]
+    return load_targets
 
 
 def parse_seed_list(text: str, members: int) -> list[int]:
@@ -387,6 +407,8 @@ def append_data_dictionary() -> None:
         pd.concat([old, add], ignore_index=True).to_csv(
             path, index=False, encoding="utf-8-sig"
         )
+    else:
+        add.to_csv(path, index=False, encoding="utf-8-sig")
 
 
 def write_readme(member_meta: pd.DataFrame, summary: pd.DataFrame) -> None:
@@ -452,6 +474,31 @@ def parse_args() -> argparse.Namespace:
         default_seeds = ",".join(str(int(x)) for x in default_seeds)
 
     parser = argparse.ArgumentParser(parents=[pre_parser])
+    parser.add_argument(
+        "--target-path",
+        default=str(deep_get(
+            cfg,
+            "paths.corrected_county_income",
+            "data/processed/county_income_2019_2023_deflated.csv",
+        )),
+    )
+    parser.add_argument(
+        "--package-root",
+        default=str(deep_get(
+            cfg,
+            "paths.stage8_package_root",
+            "outputs/stage6_scientific_data_product",
+        )),
+    )
+    parser.add_argument(
+        "--model-output",
+        default=str(deep_get(
+            cfg,
+            "paths.stage8_model_root",
+            "outputs/stage8_ensemble_uncertainty/models",
+        )),
+    )
+    parser.add_argument("--force", action="store_true")
     parser.add_argument("--members", type=int, default=int(defaults.get("members", 5)))
     parser.add_argument("--seeds", type=str, default=str(default_seeds or ""))
     parser.add_argument("--years", nargs="+", type=int, default=default_years)
@@ -464,12 +511,36 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    global PACKAGE, OUT, TABLES, METADATA, MODEL_OUT
     args = parse_args()
+    cfg = load_config(args.config)
+    project_version = str(deep_get(cfg, "project.version", "versioned-stage8"))
     invalid_years = sorted(set(args.years) - set(YEARS))
     if invalid_years:
         raise ValueError(f"Years outside final study period: {invalid_years}")
     if args.members < 2:
         raise ValueError("At least two ensemble members are required to estimate standard deviation.")
+
+    target_path = resolve_project_path(args.target_path)
+    PACKAGE = resolve_project_path(args.package_root)
+    OUT = PACKAGE / "data" / "ensemble_uncertainty_layers"
+    TABLES = PACKAGE / "tables"
+    METADATA = PACKAGE / "metadata"
+    MODEL_OUT = resolve_project_path(args.model_output)
+    if not target_path.is_file():
+        raise FileNotFoundError(target_path)
+    occupied = [path for path in (PACKAGE, MODEL_OUT) if path.exists() and any(path.iterdir())]
+    if occupied and not args.force:
+        raise RuntimeError(
+            "Versioned Stage 8 output is not empty; use --force only after checking the paths: "
+            + ", ".join(str(path) for path in occupied)
+        )
+    if args.force:
+        for path in (PACKAGE, MODEL_OUT):
+            if path.exists():
+                shutil.rmtree(path)
+
+    weak.load_targets = target_loader(target_path)
 
     OUT.mkdir(parents=True, exist_ok=True)
     TABLES.mkdir(parents=True, exist_ok=True)
@@ -481,6 +552,9 @@ def main() -> None:
     print("Stage 8 multi-seed ensemble uncertainty")
     print("=" * 72)
     print(json.dumps({**vars(args), "resolved_seeds": seeds}, ensure_ascii=False, indent=2))
+    print(f"Resolved target: {target_path}")
+    print(f"Resolved package: {PACKAGE}")
+    print(f"Resolved models: {MODEL_OUT}")
 
     members = [
         train_member(i + 1, seed, args.pixels_per_county, args.epochs, args.lr)
@@ -517,6 +591,34 @@ def main() -> None:
     update_manifest()
     append_data_dictionary()
     write_readme(member_meta, summary)
+
+    run_manifest = {
+        "version": project_version,
+        "target_path": str(target_path.relative_to(ROOT)).replace("\\", "/"),
+        "target_sha256": sha256(target_path),
+        "members": args.members,
+        "seeds": seeds,
+        "years": args.years,
+        "pixels_per_county": args.pixels_per_county,
+        "epochs": args.epochs,
+        "learning_rate": args.lr,
+        "threads": args.threads,
+        "row_block": args.row_block,
+        "package_root": str(PACKAGE.relative_to(ROOT)).replace("\\", "/"),
+        "model_root": str(MODEL_OUT.relative_to(ROOT)).replace("\\", "/"),
+        "files": [
+            {
+                "path": str(path.relative_to(ROOT)).replace("\\", "/"),
+                "bytes": path.stat().st_size,
+                "sha256": sha256(path),
+            }
+            for path in sorted([*PACKAGE.rglob("*"), *MODEL_OUT.rglob("*")])
+            if path.is_file()
+        ],
+    }
+    (METADATA / "stage8_run_manifest.json").write_text(
+        json.dumps(run_manifest, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
 
     print("\nStage 8 finished.")
     print(OUT)

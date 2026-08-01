@@ -68,9 +68,10 @@ china_rural_income_1km_2019_2023_v1.0-draft/
 
 | 本地内容 | 当前处理建议 | 原因 |
 |---|---|---|
-| `data/county_rural_income_2019.csv` 至 `data/county_rural_income_2023.csv` | 不公开 | 县级收入原始/近原始标签来自购买或第三方数据 |
+| `data/county_rural_income_2019.csv` 至 `data/county_rural_income_2023.csv` | 不公开 | 作者根据统计年鉴及地方官方资料汇编的县级收入近原始标签；因逐条来源和再分发边界尚未全部核实，原值不进入公开包 |
 | `data/county_rural_income_all.csv` | 不公开 | 可能包含购买县级收入合集 |
-| `data/CNT_ResidentIncome.xlsx` | 不公开 | 用户已说明为网上购买获得 |
+| `data/CNT_ResidentIncome.xlsx` | 不公开 | 作者根据省级统计年鉴及地方官方统计资料汇编；当前文件未保留完整逐省逐年来源细节，县级收入原值不进入公开包 |
+| `metadata/*provenance*index_v1.1.csv`、`metadata/*search_group_index_v1.1.csv`、`metadata/verified_source_items_v1.1.csv` | 公开 | 仅含标识符、检索组、来源状态和来源网址，不含县级收入值；省年/地市年检索组明确标记为“不是来源” |
 | `data/中国各县域城乡居民收入（2000-2022年）.xlsx` | 不使用、仅内部归档 | 与 `CNT_ResidentIncome.xlsx` 的2000—2022记录重复，不参与当前分析 |
 | `data/2020xianBJ/` | 不公开 | 购买县界或再分发边界未确认 |
 | 原始国家统计局 Excel | 暂不随包公开 | 可提供来源网页、指标和处理后派生表；原始 Excel 是否再分发后续再确认 |

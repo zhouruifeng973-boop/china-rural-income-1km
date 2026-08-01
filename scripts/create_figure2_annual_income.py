@@ -113,10 +113,6 @@ def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.Im
                 Path("C:/Windows/Fonts/calibri.ttf"),
             ]
         )
-    candidates.append(
-        ROOT
-        / "C:/Users/ZouRfu/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/Lib/site-packages/PIL/fonts/FreeMono.ttf"
-    )
     for candidate in candidates:
         if candidate.exists():
             return ImageFont.truetype(str(candidate), size=size)

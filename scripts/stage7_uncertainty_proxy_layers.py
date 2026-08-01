@@ -16,6 +16,7 @@ interpretation caution.
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import sys
 from pathlib import Path
@@ -383,9 +384,23 @@ def append_data_dictionary() -> None:
         pd.concat([old, add], ignore_index=True).to_csv(
             path, index=False, encoding="utf-8-sig"
         )
+    else:
+        add.to_csv(path, index=False, encoding="utf-8-sig")
 
 
 def main() -> None:
+    global PACKAGE, INCOME, QUALITY, OUT, TABLES, METADATA
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--package-root", type=Path, default=PACKAGE)
+    args = parser.parse_args()
+    PACKAGE = args.package_root.resolve()
+    INCOME = PACKAGE / "data" / "income_maps"
+    QUALITY = PACKAGE / "data" / "quality_layers"
+    OUT = PACKAGE / "data" / "uncertainty_proxy_layers"
+    TABLES = PACKAGE / "tables"
+    METADATA = PACKAGE / "metadata"
+    TABLES.mkdir(parents=True, exist_ok=True)
+    METADATA.mkdir(parents=True, exist_ok=True)
     OUT.mkdir(parents=True, exist_ok=True)
     summaries = []
     for year in YEARS:
