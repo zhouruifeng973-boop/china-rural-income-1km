@@ -31,6 +31,19 @@ python scripts/run_v3_final_pipeline.py
 
 Before an actual v1.3 model run, review `config/workflow_v1.3_official44_corrected.yaml` and the expected-input documentation. The corrected county-level target named by that configuration is a locally supplied restricted input and is deliberately absent from this repository.
 
+## Publication-map boundaries
+
+Figures 2, 3 and 5 use the 2019 China ADM0 and ADM1 layers from geoBoundaries only as cartographic context. Download the `gbOpen` China ADM0 and ADM1 all-format archives and extract the shapefiles to:
+
+```text
+data/public_boundaries/geoboundaries_CHN_2019/ADM0/geoBoundaries-CHN-ADM0.shp
+data/public_boundaries/geoboundaries_CHN_2019/ADM1/geoBoundaries-CHN-ADM1.shp
+```
+
+The source boundary archives are deliberately not committed. The display layers are independent of the restricted county geometry used for modelling, county aggregation and calibration. The released product covers mainland China; Hong Kong, Macao and Taiwan are outside product coverage. No South China Sea or nine-dash-line layer is used in these figures.
+
+Boundary citation: Runfola, D. et al. *geoBoundaries: A global database of political administrative boundaries*. PLoS ONE 15, e0231866 (2020). https://doi.org/10.1371/journal.pone.0231866.
+
 ## Main stages
 
 1. Statistical and spatial preprocessing.

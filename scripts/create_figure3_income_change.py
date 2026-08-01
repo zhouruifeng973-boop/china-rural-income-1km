@@ -15,10 +15,12 @@ from rasterio.transform import from_bounds
 from rasterio.warp import reproject, transform_bounds
 
 from create_figure2_annual_income import (
-    COUNTRY_LINE_RGB,
+    BOUNDARY_CITATION,
+    BOUNDARY_DOI,
+    BOUNDARY_LICENSE,
+    COUNTRY_SHP,
     MAIN_LONLAT_BOUNDS,
     MUTED_RGB,
-    NINE_DASH_SHP,
     NODATA_LAND_RGB,
     OUTSIDE_RGB,
     PANEL_BORDER_RGB,
@@ -170,22 +172,6 @@ def lonlat_to_local(point, size, bounds):
     return x, y
 
 
-def make_south_china_sea_inset(province_parts, nine_dash_parts, width=320, height=270):
-    inset = Image.new("RGB", (width, height), (250, 251, 252))
-    draw = ImageDraw.Draw(inset)
-    inset_bounds = (105.0, 3.0, 125.0, 25.0)
-    for part in province_parts:
-        pts = [lonlat_to_local(p, (width, height), inset_bounds) for p in part]
-        if len(pts) >= 2:
-            draw.line(pts, fill=COUNTRY_LINE_RGB, width=2, joint="curve")
-    for part in nine_dash_parts:
-        pts = [lonlat_to_local(p, (width, height), inset_bounds) for p in part]
-        if len(pts) >= 2:
-            draw.line(pts, fill=COUNTRY_LINE_RGB, width=3, joint="curve")
-    draw.rectangle((0, 0, width - 1, height - 1), outline=PANEL_BORDER_RGB, width=2)
-    return inset
-
-
 def draw_horizontal_legend(draw, y, labels, colours, unit_title, panel_x=45):
     draw.text((panel_x, y), unit_title, font=FONT_NOTE, fill=MUTED_RGB)
     start_y = y + 48
@@ -230,8 +216,6 @@ def make_panel(
     bounds,
     grid_transform,
     projected_provinces,
-    province_parts_lonlat,
-    nine_dash_parts_lonlat,
 ):
     panel = Image.new("RGB", (PANEL_W, PANEL_H), OUTSIDE_RGB)
     map_image = Image.new("RGB", (MAP_W, MAP_H), OUTSIDE_RGB)
@@ -254,23 +238,17 @@ def make_panel(
     draw_horizontal_legend(draw, legend_y, class_labels, class_rgb, unit_title, panel_x=55)
     draw.text((55, 1198), explanatory_note, font=FONT_NOTE, fill=MUTED_RGB)
 
-    inset = make_south_china_sea_inset(province_parts_lonlat, nine_dash_parts_lonlat)
-    inset_x = PANEL_W - inset.width - 38
-    inset_y = 655
-    panel.paste(inset, (inset_x, inset_y))
-    draw.rectangle((inset_x, inset_y - 36, inset_x + 300, inset_y - 2), fill=OUTSIDE_RGB)
-    draw.text((inset_x, inset_y - 34), "South China Sea inset", font=FONT_NOTE, fill=TEXT_RGB)
+    draw.text((MAP_W - 420, 952), "Study area: mainland China", font=FONT_NOTE, fill=MUTED_RGB)
     return panel
 
 
 def main():
     FIGURE_DIR.mkdir(parents=True, exist_ok=True)
-    missing = [str(p) for p in [ABS_PATH, PCT_PATH, PROVINCE_SHP, NINE_DASH_SHP] if not p.exists()]
+    missing = [str(p) for p in [ABS_PATH, PCT_PATH, COUNTRY_SHP, PROVINCE_SHP] if not p.exists()]
     if missing:
         raise FileNotFoundError("Missing Figure 3 input(s):\n" + "\n".join(missing))
 
     province_parts_lonlat = read_shapefile_parts(PROVINCE_SHP)
-    nine_dash_parts_lonlat = read_shapefile_parts(NINE_DASH_SHP)
     projected_provinces = project_parts(province_parts_lonlat)
     bounds, grid_transform = target_grid()
 
@@ -286,8 +264,6 @@ def main():
         bounds,
         grid_transform,
         projected_provinces,
-        province_parts_lonlat,
-        nine_dash_parts_lonlat,
     )
     panel_pct = make_panel(
         "(b)",
@@ -301,8 +277,6 @@ def main():
         bounds,
         grid_transform,
         projected_provinces,
-        province_parts_lonlat,
-        nine_dash_parts_lonlat,
     )
 
     canvas = Image.new("RGB", (CANVAS_W, CANVAS_H), OUTSIDE_RGB)
@@ -336,8 +310,15 @@ def main():
             "full_resolution_summary": full_resolution_summary(PCT_PATH),
         },
         "nodata_land_rgb": NODATA_LAND_RGB,
-        "boundary_source_internal_draft": str(PROVINCE_SHP.relative_to(ROOT)).replace("\\", "/"),
-        "boundary_license_action": "Verify publication permission or replace before submission.",
+        "display_boundary_sources": [
+            str(COUNTRY_SHP.relative_to(ROOT)).replace("\\", "/"),
+            str(PROVINCE_SHP.relative_to(ROOT)).replace("\\", "/"),
+        ],
+        "display_boundary_year": 2019,
+        "display_boundary_citation": BOUNDARY_CITATION,
+        "display_boundary_doi": BOUNDARY_DOI,
+        "display_boundary_license": BOUNDARY_LICENSE,
+        "study_area_note": "Released data product covers mainland China; Hong Kong, Macao and Taiwan are outside product coverage.",
         "outputs": [
             str(png_path.relative_to(ROOT)).replace("\\", "/"),
             str(tif_path.relative_to(ROOT)).replace("\\", "/"),
