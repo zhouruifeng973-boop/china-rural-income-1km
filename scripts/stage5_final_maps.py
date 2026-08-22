@@ -3,6 +3,11 @@
 
 Outputs are restricted to mainland province codes with positive strict rural
 population weights. Income is expressed in constant 2019 yuan/person/year.
+
+For the canonical v1.5 workflow, run ``run_v1_5_no_road_pipeline.py`` or
+``stage12_hebei14_full_rerun.py`` with the v1.5 configuration. Those entry
+points remove ``road_density`` before this historical feature specification is
+used. Direct execution of this legacy module is not the v1.5 workflow.
 """
 
 from __future__ import annotations

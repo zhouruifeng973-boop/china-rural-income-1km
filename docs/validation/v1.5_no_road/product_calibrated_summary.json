@@ -1,0 +1,43 @@
+{
+  "scheme": "2019_2023_multiyear_groupkfold_by_province_product_calibration",
+  "county_year_records": 8275,
+  "province_count": 21,
+  "province_year_count": 97,
+  "before_calibration": {
+    "n": 8275,
+    "r2": 0.398396854137697,
+    "mae": 3661.3965166525677,
+    "rmse": 5194.256884115552,
+    "mape": 19.644932500741337,
+    "bias": -894.461581957704,
+    "within_year_centered_r2": 0.3745891528221176,
+    "within_province_year_centered_r2": 0.3174755321950231
+  },
+  "after_calibration": {
+    "n": 8275,
+    "r2": 0.6782621662462938,
+    "mae": 2859.2568126788387,
+    "rmse": 3798.563942735912,
+    "mape": 15.928119704010104,
+    "bias": -420.5891675301217,
+    "within_year_centered_r2": 0.6595230413018595,
+    "within_province_year_centered_r2": 0.32693961552076356
+  },
+  "change": {
+    "r2": 0.2798653121085968,
+    "mae": -802.139703973729,
+    "rmse": -1395.6929413796397,
+    "mape_percentage_points": -3.716812796731233
+  },
+  "calibration_factor": {
+    "min": 0.7658606530497428,
+    "median": 0.9760070489336834,
+    "max": 1.6489642257128214
+  },
+  "interpretation": "After-calibration metrics are product-level diagnostics using official province-year constraints available in the operational workflow. They are not fully independent model-validation metrics and do not validate within-province pixel-scale accuracy.",
+  "calibration_scope_note": "Factors are computed from rural-population-weighted predictions for the held-out counties represented in the validation panel. The released raster workflow computes factors from all valid rural pixels in each province-year.",
+  "input_sha256": {
+    "multiyear_leave_province_2019_2023_strict_county_year_predictions.csv": "ff949a2288ed71e1317bf2c06df5ae60e479986ba9808148341720206df8d8cd",
+    "province_income_2019_2023_deflated.csv": "ea316000dc098b80f5c3d3fbbe459d27ff89a1b18f0a657a623424b686bf9e52"
+  }
+}

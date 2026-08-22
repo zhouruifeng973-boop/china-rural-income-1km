@@ -1,6 +1,9 @@
 """第一阶段：修复2020多波段预测并做县级回聚合一致性诊断。
 
 输出均写入 outputs/stage1_2020，不覆盖既有成果。
+
+该脚本属于早期历史实验，包含后来被v1.5核心流程删除的road_density，
+不得用于生成或验证v1.5最终数据产品。
 """
 
 from contextlib import ExitStack

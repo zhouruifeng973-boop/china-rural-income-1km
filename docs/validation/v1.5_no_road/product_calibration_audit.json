@@ -1,0 +1,15 @@
+{
+  "record_count": 8275,
+  "province_count": 21,
+  "province_year_count": 97,
+  "factor_rows_unique": true,
+  "all_factors_finite_positive": true,
+  "calibrated_values_recompute_match": true,
+  "before_metrics_recompute_match": true,
+  "after_metrics_recompute_match": true,
+  "max_province_constraint_relative_error": 5.551115123125783e-16,
+  "all_within_province_year_ranks_unchanged": true,
+  "county_labels_used_to_compute_factor": false,
+  "official_province_constraint_used": true,
+  "audit_status": "PASS"
+}

@@ -1,0 +1,24 @@
+{
+  "expected_county_year_records": 8275,
+  "actual_county_year_records": 8275,
+  "unique_provinces": 21,
+  "unique_years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+  ],
+  "fold_count": 5,
+  "duplicate_year_county_records": 0,
+  "every_province_occurs_in_one_fold": true,
+  "every_province_year_occurs_in_one_fold": true,
+  "manifest_assignment_matches_predictions": true,
+  "overall_metrics_recompute_match": true,
+  "all_year_metrics_recompute_match": true,
+  "road_density_absent": true,
+  "input_feature_count_including_year": 28,
+  "all_fold_predictions_finite": true,
+  "all_fold_metrics_finite": true,
+  "audit_status": "PASS"
+}

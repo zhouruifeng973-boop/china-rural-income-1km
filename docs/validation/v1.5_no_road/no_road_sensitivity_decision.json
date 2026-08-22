@@ -1,0 +1,17 @@
+{
+  "excluded_feature": "road_density",
+  "reference_model": "outputs/official77_corrected_full_rerun_v4",
+  "ablation_model": "outputs/sensitivity_no_road_v1_4",
+  "predefined_criteria": {
+    "absolute_delta_r2_max": 0.02,
+    "absolute_delta_mape_percentage_points_max": 1.0,
+    "annual_map_pearson_r_min": 0.95,
+    "annual_map_nmae_pct_of_reference_median_max": 20.0,
+    "absolute_change_map_pearson_r_min": 0.8
+  },
+  "validation_stability_pass": true,
+  "annual_spatial_pattern_pass": false,
+  "change_spatial_pattern_pass": false,
+  "overall_sensitivity_pass": false,
+  "interpretation": "At least one predefined stability criterion failed; the core product should be regenerated without the post-period road-density covariate rather than relying only on disclosure."
+}

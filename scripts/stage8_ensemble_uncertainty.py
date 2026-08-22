@@ -46,6 +46,9 @@ import torch
 
 from repro_config import deep_get, int_list, load_config
 import stage3_weak_supervised_downscaling as weak
+import stage3_spatiotemporal_validation as validation
+import stage5_final_maps as final_maps
+from feature_ablation import patch_final_map_features, patch_weak_pixel_loader
 from stage3_spatiotemporal_validation import YEARS, add_year_column, fit_bag_model, sample_year_bags
 from stage3_weak_supervised_downscaling import ROOT, set_seed
 from stage5_final_maps import (
@@ -160,6 +163,7 @@ def train_member(
         "epochs": epochs,
         "learning_rate": lr,
         "n_features": len(BAND_NAMES) + 1,
+        "input_band_names": BAND_NAMES + ["year_scaled"],
         "init_log_income": float(model.init_log_income),
         **stats,
     }
@@ -464,7 +468,7 @@ def write_readme(member_meta: pd.DataFrame, summary: pd.DataFrame) -> None:
 
 def parse_args() -> argparse.Namespace:
     pre_parser = argparse.ArgumentParser(add_help=False)
-    pre_parser.add_argument("--config", default=str(ROOT / "config" / "workflow_v1.0_draft.yaml"))
+    pre_parser.add_argument("--config", default=str(ROOT / "config" / "workflow_v1.5_no_road_core.json"))
     pre_args, _ = pre_parser.parse_known_args()
     cfg = load_config(pre_args.config)
     defaults = deep_get(cfg, "model.ensemble_uncertainty", {})
@@ -511,10 +515,13 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
-    global PACKAGE, OUT, TABLES, METADATA, MODEL_OUT
+    global PACKAGE, OUT, TABLES, METADATA, MODEL_OUT, BAND_NAMES, feature_specs
     args = parse_args()
     cfg = load_config(args.config)
     project_version = str(deep_get(cfg, "project.version", "versioned-stage8"))
+    excluded_features = list(
+        deep_get(cfg, "model.feature_ablation", {}).get("exclude_features", [])
+    )
     invalid_years = sorted(set(args.years) - set(YEARS))
     if invalid_years:
         raise ValueError(f"Years outside final study period: {invalid_years}")
@@ -541,6 +548,11 @@ def main() -> None:
                 shutil.rmtree(path)
 
     weak.load_targets = target_loader(target_path)
+    patch_weak_pixel_loader(weak, excluded_features)
+    validation.load_pixel_panel = weak.load_pixel_panel
+    patch_final_map_features(final_maps, excluded_features)
+    BAND_NAMES = final_maps.BAND_NAMES
+    feature_specs = final_maps.feature_specs
 
     OUT.mkdir(parents=True, exist_ok=True)
     TABLES.mkdir(parents=True, exist_ok=True)
@@ -604,6 +616,8 @@ def main() -> None:
         "learning_rate": args.lr,
         "threads": args.threads,
         "row_block": args.row_block,
+        "excluded_features": excluded_features,
+        "input_band_names": BAND_NAMES + ["year_scaled"],
         "package_root": str(PACKAGE.relative_to(ROOT)).replace("\\", "/"),
         "model_root": str(MODEL_OUT.relative_to(ROOT)).replace("\\", "/"),
         "files": [

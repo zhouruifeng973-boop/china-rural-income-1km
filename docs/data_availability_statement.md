@@ -1,6 +1,6 @@
 # Data Availability Statement 草稿
 
-适用版本：`china_rural_income_1km_2019_2023_v1.0-draft`  
+适用版本：`china_rural_income_1km_2019_2023_v1.5-no-road`
 当前状态：公开发布包已生成并通过二次审查；ZIP 已上传到 Zenodo restricted draft，预留 DOI 为 `10.5281/zenodo.21711838`，尚未公开发布。
 
 ## 中文说明版
@@ -29,16 +29,16 @@ Intended public record URL after publication: https://zenodo.org/records/2171183
 
 草稿网址仅供记录所有者管理，不应写入论文或作为审稿人访问链接。DOI 只有在 Zenodo 记录发布后才会正式注册并解析。
 
-作者原创的 1 km 派生数据产品拟采用 Creative Commons Attribution 4.0 International（CC BY 4.0）许可证，但正式公开仍以完成第三方权利复核为前提。该许可证只覆盖公开包中的作者原创派生产品和作者编写的说明文档，不覆盖作者整理的县级收入工作源表、购买行政边界、国家统计局原始 Excel、原始 OpenStreetMap PBF 或其他未纳入公开包的第三方材料。
+作者原创的 1 km 派生数据产品拟采用 Creative Commons Attribution 4.0 International（CC BY 4.0）许可证，但正式公开仍以完成第三方权利复核为前提。该许可证只覆盖公开包中的作者原创派生产品和作者编写的说明文档，不覆盖作者整理的县级收入工作源表、购买行政边界、国家统计局原始 Excel 或其他未纳入公开包的第三方材料。
 
-本研究使用的公开源数据包括 WorldPop 人口数据、GHS-SMOD 城乡分类、VIIRS 夜间灯光、MODIS 植被指数、MODIS NPP、ESA WorldCover、ERA5-Land、Sentinel-2、SRTM、OpenStreetMap 派生道路特征以及国家统计局公开统计数据。各源数据的来源、引用和许可信息记录在：
+本研究最终v1.5流程使用的公开源数据包括 WorldPop 人口数据、GHS-SMOD 城乡分类、VIIRS 夜间灯光、MODIS 植被指数、MODIS NPP、ESA WorldCover、ERA5-Land、Sentinel-2、SRTM以及国家统计局公开统计数据。早期实验中的2026年OpenStreetMap道路密度特征已从最终模型和数据产品中删除。各源数据的来源、引用和许可信息记录在：
 
 ```text
 outputs/stage6_scientific_data_product/PUBLIC_SOURCE_DATA_CITATIONS_AND_LICENSES_FILLED.md
 outputs/stage6_scientific_data_product/metadata/source_data_inventory_public_sources_filled_draft.csv
 ```
 
-县级收入标签由作者根据各省统计年鉴及地方官方统计资料整理形成。在逐省逐年年鉴来源对照表补齐前，工作源表 `CNT_ResidentIncome.xlsx` 以及能够重建县级真实值的训练表和残差表未包含在公开发布包中。`中国各县域城乡居民收入（2000-2022年）.xlsx` 是重复历史副本，不参与分析。购买县界数据、原始国家统计局 Excel 工作簿、原始 OSM PBF 文件，以及其他再分发条款尚待复核的第三方原始数据也未包含在公开包中。具体排除规则见：
+县级收入标签由作者根据各省统计年鉴及地方官方统计资料整理形成。工作源表 `CNT_ResidentIncome.xlsx` 以及能够重建县级真实值的训练表和残差表未包含在公开发布包中。`中国各县域城乡居民收入（2000-2022年）.xlsx` 是重复历史副本，不参与分析。非再分发行政边界、原始国家统计局 Excel 工作簿以及其他再分发条款尚待复核的第三方原始数据也未包含在公开包中。具体排除规则见：
 
 ```text
 outputs/stage6_scientific_data_product/metadata/excluded_raw_data_policy_v1.0_draft.md
@@ -51,15 +51,15 @@ outputs/public_release/china_rural_income_1km_2019_2023_v1.0-draft/PUBLIC_RELEAS
 
 The gridded data products generated in this study, including annual 1 km maps of rural residents' per capita disposable income in China for 2019–2023, 2019–2023 change maps, quality layers, rule-based uncertainty proxy layers, ensemble uncertainty layers, validation tables, metadata, data dictionary, file manifests, and source-data citation/license records, have been uploaded to a restricted Zenodo draft record under the reserved DOI https://doi.org/10.5281/zenodo.21711838. The DOI will be registered and the files will be made publicly accessible after completion of the remaining third-party rights review.
 
-The author-created 1 km derived data products will be released under the Creative Commons Attribution 4.0 International (CC BY 4.0) licence, subject to completion of the remaining third-party rights review. The licence applies only to the derived products and author-created documentation included in the public package. It does not apply to the author-compiled county-income source table, purchased administrative boundaries, raw National Bureau of Statistics workbooks, raw OpenStreetMap PBF files, or any other excluded third-party source material.
+The author-created 1 km derived data products will be released under the Creative Commons Attribution 4.0 International (CC BY 4.0) licence, subject to completion of the remaining third-party rights review. The licence applies only to the derived products and author-created documentation included in the public package. It does not apply to the author-compiled county-income source table, non-redistributed administrative boundaries, raw National Bureau of Statistics workbooks, or any other excluded third-party source material.
 
 The current pre-release package is versioned as `china_rural_income_1km_2019_2023_v1.0-draft`. The package contains 67 GeoTIFF files and associated tables and metadata, with a total size of approximately 700 MB. File sizes and SHA-256 checksums are provided in `metadata/public_release_manifest_v1.0_draft.csv`. A pre-release audit of the public package reported 156 checks passed, with no warnings or failures.
 
 The public package includes the final data products and documentation required for data reuse and technical validation, including the annual income maps, change maps, bounded sensitivity maps, quality layers, uncertainty proxy layers, ensemble uncertainty layers, validation summary tables, raster audit tables, data dictionary, file manifest, and source-data citation/license inventory.
 
-The study used several publicly available input datasets, including WorldPop population data, GHS-SMOD settlement classification, VIIRS nighttime lights, MODIS vegetation indices, MODIS net primary productivity, ESA WorldCover, ERA5-Land, Sentinel-2, SRTM, OpenStreetMap-derived road features, and public statistical data from the National Bureau of Statistics of China. Source information, citations, and license/use terms are documented in the source-data inventory and citation/license files accompanying the data product.
+The final v1.5 workflow used WorldPop population data, GHS-SMOD settlement classification, VIIRS nighttime lights, MODIS vegetation indices, MODIS net primary productivity, ESA WorldCover, ERA5-Land, Sentinel-2, SRTM, and public statistical data from the National Bureau of Statistics of China. A road-density covariate derived from a 2026 OpenStreetMap snapshot and used in an earlier experiment was removed from final model training, validation and data generation. Source information, citations, and license/use terms are documented in the source-data inventory and citation/license files accompanying the data product.
 
-County-level income labels were compiled by the authors from provincial statistical yearbooks and other officially published local statistical materials. The working source table (`CNT_ResidentIncome.xlsx`) and county-level training or residual tables that could reconstruct the observations are withheld from the current public package until a province-year crosswalk to the exact yearbook editions, tables and pages/URLs is complete. The duplicate historical workbook `中国各县域城乡居民收入（2000-2022年）.xlsx` was not used in the analysis. Purchased county boundaries, raw National Bureau of Statistics Excel workbooks, raw OpenStreetMap PBF files, and other third-party raw inputs with uncertain redistribution terms are also excluded. Users who wish to reproduce the full modelling workflow from raw inputs should compile the statistical labels from the documented yearbook sources, obtain permitted boundary inputs independently, and follow the reproducibility instructions. Users who wish to reuse or technically inspect the released gridded products do not need access to these non-redistributed raw inputs.
+County-level income labels were compiled by the authors from provincial statistical yearbooks and other officially published local statistical materials. The working source table (`CNT_ResidentIncome.xlsx`) and county-level training or residual tables that could reconstruct the observations are withheld from the current public package. The duplicate historical workbook `中国各县域城乡居民收入（2000-2022年）.xlsx` was not used in the analysis. Non-redistributed administrative boundaries, raw National Bureau of Statistics Excel workbooks, and other third-party raw inputs with uncertain redistribution terms are also excluded. Users who wish to reproduce the full modelling workflow from raw inputs should compile the statistical labels from the documented yearbook sources, obtain permitted boundary inputs independently, and follow the reproducibility instructions. Users who wish to reuse or technically inspect the released gridded products do not need access to these non-redistributed raw inputs.
 
 ## 投稿前需要补充的信息
 

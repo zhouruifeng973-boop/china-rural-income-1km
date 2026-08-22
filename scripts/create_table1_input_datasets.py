@@ -136,15 +136,6 @@ ROWS = [
         "status": "frozen_public_terms",
     },
     {
-        "dataset": "OpenStreetMap road network (Geofabrik China extract)",
-        "provider": "OpenStreetMap contributors; extract by Geofabrik",
-        "period_resolution": "Static local extract (2026-05-31/06-01); vector roads",
-        "role": "Road-density/accessibility predictor",
-        "access_terms": "Open Database Licence (ODbL) 1.0; © OpenStreetMap contributors (Ref. 13)",
-        "redistribution": "No raw PBF; derived road-density layer withheld pending ODbL classification review",
-        "status": "redistribution_caution",
-    },
-    {
         "dataset": "County/province/national administrative boundaries and county-ID raster",
         "provider": "Purchased/third-party boundary data; exact source/version documentation pending",
         "period_resolution": "Static vector boundaries; rasterised to the 1 km grid",
@@ -170,7 +161,6 @@ def main() -> None:
         "ERA5-Land climate",
         "Sentinel-2 surface reflectance",
         "SRTM terrain",
-        "OpenStreetMap roads",
         "Province CPI",
         "Province rural income",
     }

@@ -1,7 +1,7 @@
 {
   "title": "Reproducible workflow for a 1 km gridded rural-income dataset of China, 2019–2023",
   "upload_type": "software",
-  "description": "Code and configuration for weakly supervised 1 km rural-income downscaling, county-level aggregation validation, province-year calibration, map production, quality assessment and ensemble uncertainty analysis.",
+  "description": "Code and configuration for no-road weakly supervised 1 km rural-income downscaling, multi-year grouped leave-province validation, province-year calibration, map production, quality assessment and ensemble uncertainty analysis.",
   "creators": [
     {
       "name": "Wu, Shaohua",
@@ -23,7 +23,7 @@
   ],
   "access_right": "open",
   "license": "MIT",
-  "version": "v1.3-official44-corrected",
+  "version": "v1.5-no-road",
   "related_identifiers": [
     {
       "identifier": "https://doi.org/10.5281/zenodo.21711838",

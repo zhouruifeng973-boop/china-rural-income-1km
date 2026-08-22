@@ -32,9 +32,10 @@ import torch
 
 from repro_config import deep_get, int_list, load_config
 import stage3_weak_supervised_downscaling as weak
+from feature_ablation import patch_final_map_features, patch_weak_pixel_loader
 
 
-DEFAULT_CONFIG = ROOT / "config" / "workflow_v1.1_hebei14_corrected.yaml"
+DEFAULT_CONFIG = ROOT / "config" / "workflow_v1.5_no_road_core.json"
 ORIGINAL_TARGET = ROOT / "data" / "processed" / "county_income_2019_2023_deflated.csv"
 ORIGINAL_MAP_DIR = ROOT / "outputs" / "stage5_final_maps"
 NODATA = -9999.0
@@ -63,13 +64,14 @@ def target_loader(target_path: Path):
 
 def compare_maps(
     corrected_map_dir: Path,
+    reference_map_dir: Path,
     comparison_dir: Path,
     years: list[int],
 ) -> pd.DataFrame:
     comparison_dir.mkdir(parents=True, exist_ok=True)
     rows = []
     for year in years:
-        original_path = ORIGINAL_MAP_DIR / f"rural_income_{year}_final_calibrated_unbounded_2019yuan_strict.tif"
+        original_path = reference_map_dir / f"rural_income_{year}_final_calibrated_unbounded_2019yuan_strict.tif"
         corrected_path = corrected_map_dir / f"rural_income_{year}_final_calibrated_unbounded_2019yuan_strict.tif"
         difference_path = comparison_dir / f"corrected_minus_original_{year}_2019yuan.tif"
         weight_path = ROOT / "data" / "processed" / "rural_weights" / f"rural_pop_weight_{year}_strict.tif"
@@ -159,8 +161,29 @@ def main() -> None:
         "paths.output_root",
         "outputs/hebei14_corrected_full_rerun_v1",
     )
+    reference_target = ROOT / deep_get(
+        config,
+        "paths.parent_county_income",
+        str(ORIGINAL_TARGET.relative_to(ROOT)).replace("\\", "/"),
+    )
+    reference_map_dir = ROOT / deep_get(
+        config,
+        "paths.comparison_map_root",
+        str(ORIGINAL_MAP_DIR.relative_to(ROOT)).replace("\\", "/"),
+    )
+    reference_validation_path = ROOT / deep_get(
+        config,
+        "paths.comparison_validation_metrics",
+        "outputs/stage3_weak_supervision/spatiotemporal_validation/leave_year_2019_2023_strict_overall_metrics.json",
+    )
     if not target_path.is_file():
         raise FileNotFoundError(target_path)
+    if not reference_target.is_file():
+        raise FileNotFoundError(reference_target)
+    if not reference_map_dir.is_dir():
+        raise FileNotFoundError(reference_map_dir)
+    if not reference_validation_path.is_file():
+        raise FileNotFoundError(reference_validation_path)
     if output_root.exists() and any(output_root.iterdir()):
         if not args.force:
             raise RuntimeError(f"Versioned output directory is not empty: {output_root}")
@@ -169,13 +192,17 @@ def main() -> None:
 
     validation_cfg = deep_get(config, "model.spatiotemporal_validation", {})
     final_cfg = deep_get(config, "model.final_maps", {})
+    excluded_features = list(
+        deep_get(config, "model.feature_ablation", {}).get("exclude_features", [])
+    )
     years = int_list(final_cfg.get("years"), [2019, 2020, 2021, 2022, 2023])
     threads = int(final_cfg.get("threads", 8))
     torch.set_num_threads(max(1, threads))
 
-    # Patch only the county-label loader and output roots. Raster features,
-    # weights and province calibration targets remain the frozen v1.0 inputs.
+    # Patch the county-label loader and explicitly remove any versioned
+    # feature exclusions before validation and nationwide prediction.
     weak.load_targets = target_loader(target_path)
+    patch_weak_pixel_loader(weak, excluded_features)
     weak.OUT = output_root / "stage3_weak_supervision"
     weak.OUT.mkdir(parents=True, exist_ok=True)
 
@@ -192,6 +219,7 @@ def main() -> None:
     validation.save_leave_year(*leave_year)
 
     import stage5_final_maps as final_maps
+    patch_final_map_features(final_maps, excluded_features)
     final_maps.OUT = output_root / "stage5_final_maps"
     final_maps.MODEL_DIR = final_maps.OUT / "model"
     final_maps.OUT.mkdir(parents=True, exist_ok=True)
@@ -224,17 +252,13 @@ def main() -> None:
     bounded_change.OUT = final_maps.OUT
     bounded_change.main()
 
-    print("[4/5] Pixel-level comparison against v1.0 maps", flush=True)
+    print(f"[4/5] Pixel-level comparison against {reference_map_dir}", flush=True)
     comparison_dir = output_root / "map_comparison"
-    comparison = compare_maps(final_maps.OUT, comparison_dir, years)
+    comparison = compare_maps(final_maps.OUT, reference_map_dir, comparison_dir, years)
     comparison_csv = comparison_dir / "annual_map_difference_summary.csv"
     comparison.to_csv(comparison_csv, index=False, encoding="utf-8-sig")
 
-    original_validation_path = (
-        ROOT / "outputs" / "stage3_weak_supervision" / "spatiotemporal_validation"
-        / "leave_year_2019_2023_strict_overall_metrics.json"
-    )
-    original_validation = json.loads(original_validation_path.read_text(encoding="utf-8"))
+    original_validation = json.loads(reference_validation_path.read_text(encoding="utf-8"))
     corrected_validation = leave_year[2]
     validation_delta = {
         metric: float(corrected_validation[metric] - original_validation[metric])
@@ -247,10 +271,14 @@ def main() -> None:
         "version": run_version,
         "run_role": run_role,
         "label_description": label_description,
+        "excluded_features": excluded_features,
         "config": str(args.config.resolve()),
         "corrected_target": str(target_path.relative_to(ROOT)).replace("\\", "/"),
         "corrected_target_sha256": sha256(target_path),
-        "original_target_sha256": sha256(ORIGINAL_TARGET),
+        "reference_target": str(reference_target.relative_to(ROOT)).replace("\\", "/"),
+        "reference_target_sha256": sha256(reference_target),
+        "reference_map_root": str(reference_map_dir.relative_to(ROOT)).replace("\\", "/"),
+        "reference_validation_metrics": str(reference_validation_path.relative_to(ROOT)).replace("\\", "/"),
         "original_outputs_overwritten": False,
         "leave_year_validation_original": original_validation,
         "leave_year_validation_corrected": corrected_validation,

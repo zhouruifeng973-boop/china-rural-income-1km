@@ -1,0 +1,68 @@
+{
+  "project": {
+    "name": "china_rural_income_1km_2019_2023",
+    "version": "v1.5-no-road",
+    "run_role": "canonical_no_future_road_core",
+    "label_description": "Source-audited county labels with the post-period OSM road-density covariate excluded",
+    "study_years": [2019, 2020, 2021, 2022, 2023],
+    "price_base_year": 2019,
+    "main_mask": "strict",
+    "main_product": "unbounded"
+  },
+  "paths": {
+    "corrected_county_income": "data/corrections/county_income_2019_2023_deflated_official77_corrected_v4.csv",
+    "parent_county_income": "data/corrections/county_income_2019_2023_deflated_official77_corrected_v4.csv",
+    "output_root": "outputs/sensitivity_no_road_v1_4",
+    "comparison_map_root": "outputs/official77_corrected_full_rerun_v4/stage5_final_maps",
+    "comparison_validation_metrics": "outputs/official77_corrected_full_rerun_v4/stage3_weak_supervision/spatiotemporal_validation/leave_year_2019_2023_strict_overall_metrics.json",
+    "stage8_package_root": "outputs/no_road_core_stage8_v1_5/package",
+    "stage8_model_root": "outputs/no_road_core_stage8_v1_5/models"
+  },
+  "model": {
+    "feature_ablation": {
+      "exclude_features": ["road_density"],
+      "reason": "The available OSM road snapshot dates to 2026 and could leak post-study-period information into 2019-2023 spatial estimates."
+    },
+    "spatiotemporal_validation": {
+      "run": "all",
+      "year": 2020,
+      "mask": "strict",
+      "province_folds": 5,
+      "province_pixels": 128,
+      "year_pixels": 64,
+      "epochs": 150,
+      "lr": 0.001,
+      "threads": 8
+    },
+    "multiyear_leave_province_validation": {
+      "years": [2019, 2020, 2021, 2022, 2023],
+      "mask": "strict",
+      "folds": 5,
+      "pixels_per_county": 128,
+      "epochs": 150,
+      "lr": 0.001,
+      "threads": 8,
+      "output_regularization": 0.001,
+      "output_root": "outputs/multiyear_leave_province_v1_5_no_road"
+    },
+    "final_maps": {
+      "years": [2019, 2020, 2021, 2022, 2023],
+      "pixels_per_county": 128,
+      "epochs": 150,
+      "lr": 0.001,
+      "threads": 8,
+      "row_block": 128,
+      "reuse_model": true
+    },
+    "ensemble_uncertainty": {
+      "members": 5,
+      "seeds": [1042, 2039, 3036, 4033, 5030],
+      "years": [2019, 2020, 2021, 2022, 2023],
+      "pixels_per_county": 128,
+      "epochs": 150,
+      "lr": 0.001,
+      "threads": 8,
+      "row_block": 128
+    }
+  }
+}

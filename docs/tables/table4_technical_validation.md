@@ -4,11 +4,9 @@
 
 | Validation experiment | n | R² | MAE | RMSE | MAPE | Bias |
 |---|---:|---:|---:|---:|---:|---:|
-| 2020 leave-county five-fold, strict mask | 1,682 | 0.680 | 2,545.6 | 3,450.1 | 15.10% | -264.4 |
-| 2020 leave-county five-fold, broad mask | 1,682 | 0.697 | 2,497.5 | 3,358.1 | 14.96% | -230.8 |
-| 2020 leave-province, strict mask, before calibration | 1,682 | 0.463 | 3,168.8 | 4,470.4 | 18.87% | -526.8 |
-| 2020 leave-province, strict mask, after calibration | 1,682 | 0.670 | 2,532.3 | 3,500.9 | 15.16% | -323.1 |
-| 2019–2023 leave-one-year-out, strict mask, before calibration | 8,275 | 0.685 | 2,783.6 | 3,762.2 | 15.35% | -315.3 |
-| 2019–2023 leave-one-year-out, strict mask, after calibration | 8,275 | 0.751 | 2,511.2 | 3,343.6 | 13.97% | -336.0 |
+| 2020 five-fold leave-province, no-road, before calibration | 1,682 | 0.442 | 3,292.6 | 4,555.6 | 19.72% | -616.3 |
+| 2019–2023 leave-one-year-out, no-road, before calibration | 8,275 | 0.689 | 2,789.8 | 3,734.4 | 15.49% | -290.8 |
+| 2019–2023 five-fold GroupKFold by province, no-road, before calibration | 8,275 | 0.398 | 3,661.4 | 5,194.3 | 19.64% | -894.5 |
+| 2019–2023 five-fold GroupKFold by province, no-road, after operational province-year calibration | 8,275 | 0.678 | 2,859.3 | 3,798.6 | 15.93% | -420.6 |
 
-Source: `tables/validation_summary.csv`.
+Sources: `docs/validation/v1.5_no_road/` and the aggregate validation tables in the v1.5 release candidate. The after-calibration row is a final-product workflow diagnostic, not fully independent validation.

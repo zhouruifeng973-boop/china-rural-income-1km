@@ -1,16 +1,20 @@
 # Reproducible workflow for the 1 km rural-income dataset of China, 2019–2023
 
-Current release candidate: **v1.3-official44-corrected**.
+Current release candidate: **v1.5-no-road**.
 
 This repository contains the code, configuration and documentation used to generate and technically validate a 1 km gridded dataset of rural residents' per capita disposable income in mainland China for 2019–2023.
 
 ## Scope
 
-The workflow combines county-level weak supervision, remote-sensing and spatial covariates, rural-population-weighted county aggregation, province-year calibration, change analysis, quality layers and five-member ensemble uncertainty. Income values are expressed in 2019 constant Chinese yuan per person per year.
+The workflow combines county-level weak supervision, remote-sensing and spatial covariates, rural-population-weighted county aggregation, province-year calibration, change analysis, quality layers and five-member ensemble uncertainty. Income values are expressed in 2019 constant Chinese yuan per person per year. The canonical v1.5 model uses 27 spatial covariates plus a scaled year variable and excludes `road_density`.
+
+## Resolution of post-period road-data leakage
+
+An earlier experimental workflow used a road-density layer derived from an OpenStreetMap snapshot obtained in 2026. Because that snapshot post-dates the 2019–2023 study period, v1.5 removes `road_density` from model training, leave-year and leave-province validation, nationwide prediction, and the five-member ensemble. The canonical annual maps and change products were regenerated without this feature. The historical road-enabled scripts and configuration remain only for provenance and are not the recommended workflow.
 
 ## Reproducibility boundary
 
-The public code repository does not contain the author-compiled county-level income table, purchased administrative boundaries, raw National Bureau of Statistics workbooks, raw OpenStreetMap PBF files, or other third-party inputs with unresolved redistribution rights. Full raw-input reproduction requires the province-year statistical-yearbook source crosswalk and locally supplied boundary data. Public-product auditing and downstream reuse do not require those inputs.
+The public code repository does not contain the author-compiled county-level income table, non-redistributed administrative assignment boundaries, raw National Bureau of Statistics workbooks, or other third-party inputs with unresolved redistribution rights. The 2026 OpenStreetMap snapshot and its derived road-density raster are neither redistributed nor used by the v1.5 workflow. Full raw-input reproduction requires the province-year statistical-yearbook source crosswalk and locally supplied boundary data. Public-product auditing and downstream reuse do not require those inputs.
 
 ## Installation
 
@@ -25,11 +29,16 @@ Both pipeline entry points run in dry-run mode unless `--execute` is supplied:
 
 ```bash
 python scripts/check_reproducibility_inputs.py
-python scripts/run_reproducible_pipeline.py
-python scripts/run_v3_final_pipeline.py
+python scripts/run_v1_5_no_road_pipeline.py
 ```
 
-Before an actual v1.3 model run, review `config/workflow_v1.3_official44_corrected.yaml` and the expected-input documentation. The corrected county-level target named by that configuration is a locally supplied restricted input and is deliberately absent from this repository.
+Before an actual v1.5 model run, review `config/workflow_v1.5_no_road_core.json` and the expected-input documentation. The corrected county-level target named by that configuration is a locally supplied restricted input and is deliberately absent from this repository.
+
+After checking all local inputs, execute the complete workflow with:
+
+```bash
+python scripts/run_v1_5_no_road_pipeline.py --execute
+```
 
 ## Publication-map boundaries
 
@@ -54,6 +63,17 @@ Boundary citation: Runfola, D. et al. *geoBoundaries: A global database of polit
 6. Quality and uncertainty products.
 7. Public-package construction, raster/product audit and reproducibility audit.
 8. Deterministic ZIP construction followed by an independent extraction and SHA-256 audit.
+
+## Multi-year spatial-transfer validation
+
+The v1.5 workflow adds a five-fold GroupKFold experiment using all available 2019–2023 county-year observations. Province is the grouping variable, so all five years from a held-out province remain in the same test fold and no county label from that province enters model fitting.
+
+| Diagnostic | R² | MAPE | Interpretation |
+|---|---:|---:|---|
+| Before province-year calibration | 0.398 | 19.64% | Independent spatial transfer of the no-road model |
+| After operational province-year calibration | 0.678 | 15.93% | Final-product workflow diagnostic; not fully independent validation |
+
+The after-calibration result uses only the official province-year constraint available in the operational product workflow; it does not use held-out county labels to calculate the calibration factor. Positive within-province scaling leaves county ranks unchanged. Neither result constitutes pixel-level validation. Public-safe aggregate results and audit reports are stored under `docs/validation/v1.5_no_road/`; record-level held-out county predictions are not redistributed.
 
 The Stage 17–18 reconciliation scripts document how selected official-yearbook checks were applied without embedding the checked income values. They require non-redistributed local workbooks and correction tables. The public repository therefore supports method inspection and product auditing, while a complete from-raw-data rerun remains conditional on access to the restricted inputs.
 

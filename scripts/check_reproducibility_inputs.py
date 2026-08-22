@@ -200,29 +200,6 @@ def build_specs(cfg: dict) -> list[InputSpec]:
             )
         )
 
-    specs.append(
-        InputSpec(
-            "osm_raw_or_derived",
-            "data/osm/china-latest.osm.pbf",
-            "file",
-            "full_reproduction_optional_if_road_density_exists",
-            "openstreetmap_raw_data",
-            "do_not_redistribute_raw_pbf_without_odbl_review",
-            "Raw OSM PBF used to derive road density.",
-        )
-    )
-    specs.append(
-        InputSpec(
-            "osm_raw_or_derived",
-            "features/road_density_1km.tif",
-            "file",
-            "full_reproduction",
-            "derived_spatial_feature",
-            "review_before_public_release",
-            "Road density feature derived from OSM.",
-        )
-    )
-
     for feature in ["climate", "landcover", "npp", "ntl", "vegetation"]:
         add_yearly(
             specs,
@@ -465,7 +442,7 @@ def write_markdown(results: list[CheckResult], path: Path, cfg: dict) -> None:
     lines.append(f"| 完整复现必需但缺失 | {summary['full_required_missing']} |")
     lines.append(f"| 涉及来源追溯/购买/需权利复核的数据项 | {summary['private_or_rights_review']} |")
     lines.append("")
-    lines.append("解释：这个检查器不判断科学结果好坏，只回答“文件是否在预期位置”。作者整理但来源对照尚未补齐的县级收入、购买县界、原始 OSM PBF 等即使存在，也仍应按项目政策暂不进入公开仓库。")
+    lines.append("解释：这个检查器不判断科学结果好坏，只回答“文件是否在预期位置”。作者整理的县级收入、非再分发边界及其他受限输入即使存在，也仍应按项目政策暂不进入公开仓库。v1.5不需要OSM PBF或road_density。")
     lines.append("")
     lines.append("## 2. 缺失项")
     lines.append("")

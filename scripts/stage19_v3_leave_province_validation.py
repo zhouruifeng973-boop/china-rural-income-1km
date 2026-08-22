@@ -27,9 +27,10 @@ import torch
 
 from repro_config import deep_get, load_config
 import stage3_weak_supervised_downscaling as weak
+from feature_ablation import patch_weak_pixel_loader
 
 
-DEFAULT_CONFIG = ROOT / "config" / "workflow_v1.3_official44_corrected.json"
+DEFAULT_CONFIG = ROOT / "config" / "workflow_v1.5_no_road_core.json"
 
 
 def sha256(path: Path) -> str:
@@ -67,6 +68,9 @@ def main() -> None:
     validation_out.mkdir(parents=True, exist_ok=True)
 
     settings = deep_get(config, "model.spatiotemporal_validation", {})
+    excluded_features = list(
+        deep_get(config, "model.feature_ablation", {}).get("exclude_features", [])
+    )
     year = int(settings.get("year", 2020))
     mask = str(settings.get("mask", "strict"))
     folds = int(settings.get("province_folds", 5))
@@ -87,6 +91,7 @@ def main() -> None:
         raise FileNotFoundError(target_path)
 
     weak.load_targets = target_loader(target_path)
+    patch_weak_pixel_loader(weak, excluded_features)
     torch.set_num_threads(max(1, threads))
 
     import stage3_spatiotemporal_validation as validation
@@ -111,6 +116,7 @@ def main() -> None:
             "epochs": epochs,
             "lr": lr,
             "threads": threads,
+            "excluded_features": excluded_features,
         },
         "overall_metrics": overall,
         "outputs": [
