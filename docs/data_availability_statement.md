@@ -1,23 +1,17 @@
 # Data Availability Statement 草稿
 
 适用版本：`china_rural_income_1km_2019_2023_v1.5-no-road`
-当前状态：公开发布包已生成并通过二次审查；ZIP 已上传到 Zenodo restricted draft，预留 DOI 为 `10.5281/zenodo.21711838`，尚未公开发布。
+当前状态：v1.5-no-road正式冻结包已生成并通过完整性审查，预留 DOI 为 `10.5281/zenodo.21711838`，记录处于Zenodo受限同行评审草稿状态，尚未公开发布。
 
 ## 中文说明版
 
 本研究生成的中国农村居民人均可支配收入 1 km 栅格数据产品，包括 2019—2023 年年度收入图、2019—2023 年变化图、质量控制图层、不确定性辅助图层、多随机种子集成不确定性图层、验证结果表、数据字典、文件清单和来源许可引用清单。公开发布包位于本地目录：
 
 ```text
-outputs/public_release/china_rural_income_1km_2019_2023_v1.0-draft/
+outputs/public_release_v1_5_no_road_final/china_rural_income_1km_2019_2023_v1.5-no-road/
 ```
 
-该公开包已经通过上传前二次审查：
-
-```text
-outputs/public_release/china_rural_income_1km_2019_2023_v1.0-draft/PUBLIC_RELEASE_AUDIT_v1.0_draft.md
-```
-
-二次审查结果为 `OK = 156, WARN = 0, FAIL = 0`，公开包中共包含 67 个 GeoTIFF 文件，总大小约 700 MB。公开包中的 `metadata/public_release_manifest_v1.0_draft.csv` 提供了文件大小和 SHA-256 校验值。
+正式包已完成独立解压、文件数、栅格数、清单覆盖和SHA-256一致性检查。该包共包含111个文件，其中67个为GeoTIFF。论文所引用的多年留省总体、逐折、逐年和折次逐年指标、留出省份分组、省级约束前后比较、运行配置与随机种子均已纳入冻结包。逐文件大小和SHA-256见`metadata/v1_5_no_road_manifest.json`。
 
 数据仓库记录：
 
@@ -42,7 +36,7 @@ outputs/stage6_scientific_data_product/metadata/source_data_inventory_public_sou
 
 ```text
 outputs/stage6_scientific_data_product/metadata/excluded_raw_data_policy_v1.0_draft.md
-outputs/public_release/china_rural_income_1km_2019_2023_v1.0-draft/PUBLIC_RELEASE_README_v1.0_draft.md
+outputs/public_release_v1_5_no_road_final/china_rural_income_1km_2019_2023_v1.5-no-road/README.md
 ```
 
 如果审稿人或读者需要进行完整本地复现，需要自行取得相应权限的数据输入，并根据复现说明准备本地目录。若仅使用或复核公开数据产品，则不需要访问上述受限原始数据。
@@ -53,7 +47,7 @@ The gridded data products generated in this study, including annual 1 km maps of
 
 The author-created 1 km derived data products will be released under the Creative Commons Attribution 4.0 International (CC BY 4.0) licence, subject to completion of the remaining third-party rights review. The licence applies only to the derived products and author-created documentation included in the public package. It does not apply to the author-compiled county-income source table, non-redistributed administrative boundaries, raw National Bureau of Statistics workbooks, or any other excluded third-party source material.
 
-The current pre-release package is versioned as `china_rural_income_1km_2019_2023_v1.0-draft`. The package contains 67 GeoTIFF files and associated tables and metadata, with a total size of approximately 700 MB. File sizes and SHA-256 checksums are provided in `metadata/public_release_manifest_v1.0_draft.csv`. A pre-release audit of the public package reported 156 checks passed, with no warnings or failures.
+The formal frozen peer-review package is versioned as `china_rural_income_1km_2019_2023_v1.5-no-road`. It contains 111 files, including 67 GeoTIFFs. Aggregate multi-year leave-province metrics, held-out province assignments, province-year constraint comparisons, the versioned run configuration and explicit random seeds are included with the data products. File sizes and SHA-256 checksums are provided in `metadata/v1_5_no_road_manifest.json`.
 
 The public package includes the final data products and documentation required for data reuse and technical validation, including the annual income maps, change maps, bounded sensitivity maps, quality layers, uncertainty proxy layers, ensemble uncertainty layers, validation summary tables, raster audit tables, data dictionary, file manifest, and source-data citation/license inventory.
 
@@ -67,6 +61,6 @@ County-level income labels were compiled by the authors from provincial statisti
 - [x] 数据集预留 DOI：10.5281/zenodo.21711838；
 - [x] 草稿管理 URL：https://zenodo.org/uploads/21711838；
 - [ ] 数据集公开 URL（记录发布后核验 https://zenodo.org/records/21711838）；
-- [ ] 数据仓库最终版本号；
+- [x] 数据仓库最终版本号：v1.5-no-road；
 - [ ] 若期刊要求，补充访问日期；
 - [ ] 若老师决定公开更多县级派生表，需要重新审查此声明。

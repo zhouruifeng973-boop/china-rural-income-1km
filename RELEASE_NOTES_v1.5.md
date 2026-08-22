@@ -20,3 +20,12 @@
 - Added only aggregate validation results and audit records.
 - County-level labels, held-out county predictions, residual records, administrative assignment boundaries, raw workbooks and other restricted inputs remain excluded.
 - Both the multi-year fold audit and the product-calibration audit report `PASS`.
+
+## Frozen data package
+
+- Formal package name: `china_rural_income_1km_2019_2023_v1.5-no-road.zip`.
+- Package inventory: 111 files, including 67 GeoTIFFs.
+- Added aggregate multi-year leave-province metrics at overall, fold, year and fold-by-year levels.
+- Added held-out province assignments, province-year constraint comparisons, the versioned workflow configuration and explicit random seeds.
+- Formal manifest: `metadata/v1_5_no_road_manifest.json`.
+- Reserved dataset DOI: `10.5281/zenodo.21711838`.

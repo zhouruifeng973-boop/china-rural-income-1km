@@ -1,6 +1,6 @@
 # Reproducible workflow for the 1 km rural-income dataset of China, 2019–2023
 
-Current release candidate: **v1.5-no-road**.
+Current formal release: **v1.5-no-road**.
 
 This repository contains the code, configuration and documentation used to generate and technically validate a 1 km gridded dataset of rural residents' per capita disposable income in mainland China for 2019–2023.
 
@@ -79,11 +79,11 @@ The Stage 17–18 reconciliation scripts document how selected official-yearbook
 
 ## Data product
 
-The corresponding gridded data product has been uploaded to a restricted Zenodo draft under the following reserved DOI:
+The corresponding formal frozen gridded-data package has been deposited in a restricted Zenodo peer-review record under the following reserved DOI:
 
 `https://doi.org/10.5281/zenodo.21711838`
 
-The DOI is not registered and the dataset is not publicly accessible until the Zenodo record is published after the remaining third-party-rights review.
+The peer-review package contains 111 files, including 67 GeoTIFFs and the aggregate evidence supporting the multi-year leave-province and province-year-constrained product diagnostics. The DOI will be registered and the record made public when the Zenodo draft is formally published.
 
 ## Licence and citation
 

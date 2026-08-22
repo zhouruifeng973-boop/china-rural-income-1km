@@ -1,0 +1,26 @@
+{
+  "version": "v1.5-no-road",
+  "base_random_seed": 42,
+  "multiyear_leave_province_pixel_sampling_seeds": {
+    "2019": 52061,
+    "2020": 52062,
+    "2021": 52063,
+    "2022": 52064,
+    "2023": 52065
+  },
+  "multiyear_leave_province_model_fit_seeds": {
+    "1": 27043,
+    "2": 27044,
+    "3": 27045,
+    "4": 27046,
+    "5": 27047
+  },
+  "ensemble_member_seeds": [
+    1042,
+    2039,
+    3036,
+    4033,
+    5030
+  ],
+  "derivation_note": "Seeds follow scripts/stage27_multiyear_leave_province_validation.py and config/workflow_v1.5_no_road_core.json."
+}

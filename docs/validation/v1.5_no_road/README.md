@@ -19,6 +19,6 @@ The after-calibration result is not fully independent of official province stati
 
 ## Publication boundary
 
-Included here: aggregate overall, year and fold metrics; calibration summaries; audit reports.
+Included here: aggregate overall, year and fold metrics; calibration summaries; audit reports; held-out province assignments; the versioned run configuration and random-seed record.
 
 Excluded here: county-level predictions, residuals, county income labels, administrative assignment boundaries and other restricted inputs.

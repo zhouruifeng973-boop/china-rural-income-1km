@@ -1,0 +1,165 @@
+{
+  "version": "v1.5-no-road",
+  "scheme": "multiyear_leave_province",
+  "config": "metadata/workflow_v1.5_no_road_core.json",
+  "target": "restricted county-income input (not redistributed)",
+  "target_sha256": "b8d5b287d856c7c9a788bf50562237a2dafbdcf3b0ff67615b5581a0f574d622",
+  "fold_assignments": [
+    {
+      "fold": 1,
+      "held_out_provinces": [
+        "吉林省",
+        "河北省",
+        "湖北省",
+        "甘肃省",
+        "陕西省"
+      ]
+    },
+    {
+      "fold": 2,
+      "held_out_provinces": [
+        "内蒙古自治区",
+        "河南省",
+        "海南省",
+        "福建省"
+      ]
+    },
+    {
+      "fold": 3,
+      "held_out_provinces": [
+        "云南省",
+        "宁夏回族自治区",
+        "广东省",
+        "江西省"
+      ]
+    },
+    {
+      "fold": 4,
+      "held_out_provinces": [
+        "安徽省",
+        "山东省",
+        "江苏省",
+        "浙江省"
+      ]
+    },
+    {
+      "fold": 5,
+      "held_out_provinces": [
+        "山西省",
+        "广西壮族自治区",
+        "贵州省",
+        "重庆市"
+      ]
+    }
+  ],
+  "settings": {
+    "years": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023
+    ],
+    "mask": "strict",
+    "folds": 5,
+    "pixels_per_county": 128,
+    "epochs": 150,
+    "lr": 0.001,
+    "threads": 8,
+    "output_regularization": 0.001,
+    "excluded_features": [
+      "road_density"
+    ],
+    "input_band_names": [
+      "ntl",
+      "ndvi_mean",
+      "ndvi_max",
+      "ndvi_std",
+      "evi_mean",
+      "npp",
+      "tree_frac",
+      "shrub_frac",
+      "grass_frac",
+      "crop_frac",
+      "built_frac",
+      "bare_frac",
+      "water_frac",
+      "wetland_frac",
+      "dem",
+      "slope",
+      "aspect",
+      "temp_mean",
+      "precip_sum",
+      "solar_mean",
+      "B2",
+      "B3",
+      "B4",
+      "B8",
+      "ndvi_s2",
+      "ndwi",
+      "ndbi",
+      "year_scaled"
+    ]
+  },
+  "overall_metrics": {
+    "n": 8275,
+    "r2": 0.3983968527713416,
+    "mae": 3661.3965244406154,
+    "rmse": 5194.256893932588,
+    "mape": 19.64493255471629,
+    "bias": -894.4615848635763,
+    "scheme": "multiyear_leave_province",
+    "years": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023
+    ],
+    "mask": "strict",
+    "folds": 5,
+    "province_count": 21,
+    "county_year_observation_count": 8275,
+    "pixels_per_county": 128,
+    "epochs": 150,
+    "learning_rate": 0.001,
+    "output_regularization": 0.001,
+    "within_year_centered_r2": 0.3745891512985682,
+    "excluded_features": [
+      "road_density"
+    ],
+    "input_band_names": [
+      "ntl",
+      "ndvi_mean",
+      "ndvi_max",
+      "ndvi_std",
+      "evi_mean",
+      "npp",
+      "tree_frac",
+      "shrub_frac",
+      "grass_frac",
+      "crop_frac",
+      "built_frac",
+      "bare_frac",
+      "water_frac",
+      "wetland_frac",
+      "dem",
+      "slope",
+      "aspect",
+      "temp_mean",
+      "precip_sum",
+      "solar_mean",
+      "B2",
+      "B3",
+      "B4",
+      "B8",
+      "ndvi_s2",
+      "ndwi",
+      "ndbi",
+      "year_scaled"
+    ],
+    "province_year_leakage": false,
+    "note": "Pooled R2 includes between-year income differences; per-year and within-year-centered R2 are the primary spatial-transfer diagnostics."
+  },
+  "historical_outputs_overwritten": false
+}
