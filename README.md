@@ -14,7 +14,7 @@ An earlier experimental workflow used a road-density layer derived from an OpenS
 
 ## Reproducibility boundary
 
-The public code repository does not contain the author-compiled county-level income table, non-redistributed administrative assignment boundaries, raw National Bureau of Statistics workbooks, or other third-party inputs with unresolved redistribution rights. The 2026 OpenStreetMap snapshot and its derived road-density raster are neither redistributed nor used by the v1.5 workflow. Full raw-input reproduction requires the province-year statistical-yearbook source crosswalk and locally supplied boundary data. Public-product auditing and downstream reuse do not require those inputs.
+The public code repository does not contain the author-compiled county-level income table, non-redistributed administrative assignment boundaries, raw National Bureau of Statistics workbooks, or other third-party inputs with unresolved redistribution rights. The fixed 2020 county framework is a critical computational input because it determines pixel-to-county assignment, population-weighted aggregation, weak-supervision units and province-grouped validation, although it is not a model predictor. Its source page did not provide a standardised open-licence statement, so the source vectors, county-ID raster and boundary-derived intermediate files are not redistributed. Consequently, the public materials cannot reproduce the workflow end-to-end from the original county-boundary input alone. The documented processing, modelling, validation, calibration and audit stages can be rerun only after a user supplies an equivalent county-to-pixel assignment under a licence available to that user; a different geometry may not produce numerically identical results. The public geoBoundaries layers used in figures are cartographic backgrounds only. See `docs/BOUNDARY_REPRODUCIBILITY_LIMITATION.md`. The 2026 OpenStreetMap snapshot and its derived road-density raster are neither redistributed nor used by the v1.5 workflow. Public-product auditing and downstream reuse do not require the restricted raw inputs.
 
 ## Installation
 
@@ -95,7 +95,7 @@ The corresponding formal frozen gridded-data package has been deposited in a res
 
 `https://doi.org/10.5281/zenodo.21711838`
 
-The final peer-review package contains 155 files, including 67 GeoTIFFs and aggregate evidence for multi-year leave-province validation, province-year-constrained diagnostics, training-label sensitivity, the county-uniform baseline and parameter sensitivity. The frozen ZIP is named `china_rural_income_1km_2019_2023_v1.5-no-road.zip` and has SHA-256 `da380c406d04696cf988cc6f6000ab8f21b6f0ebb40e6ffe0763d942e98dbf21`. The DOI will be registered and the record made public when the Zenodo draft is formally published.
+The final peer-review package contains 156 files, including 67 GeoTIFFs and aggregate evidence for multi-year leave-province validation, province-year-constrained diagnostics, training-label sensitivity, the county-uniform baseline, parameter sensitivity and the administrative-boundary reproducibility disclosure. The frozen ZIP is named `china_rural_income_1km_2019_2023_v1.5-no-road.zip` and has SHA-256 `61e22c9f48fd77d7c68d543727a59f1ad1eb4c035994aec1437ef8baae661426`. The DOI will be registered and the record made public when the Zenodo draft is formally published.
 
 ## Licence and citation
 

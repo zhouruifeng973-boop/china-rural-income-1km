@@ -19,6 +19,7 @@
 
 - Added only aggregate validation results, provenance metadata and audit records.
 - County-level labels, held-out county predictions, residual records, administrative assignment boundaries, raw workbooks and other restricted inputs remain excluded.
+- Added an explicit administrative-boundary reproducibility disclosure: the fixed 2020 boundary is a critical computational input, its standardised open licence was not confirmed, and the public materials cannot reproduce the workflow end-to-end from the original boundary input alone.
 - Both the multi-year fold audit and the product-calibration audit report `PASS`.
 
 ## Provenance and robustness evidence
@@ -33,9 +34,9 @@
 ## Frozen data package
 
 - Formal package name: `china_rural_income_1km_2019_2023_v1.5-no-road.zip`.
-- Package inventory: 155 files, including 67 GeoTIFFs.
+- Package inventory: 156 files, including 67 GeoTIFFs.
 - Added aggregate multi-year leave-province metrics at overall, fold, year and fold-by-year levels.
 - Added held-out province assignments, province-year constraint comparisons, the versioned workflow configuration and explicit random seeds.
 - Formal manifest: `metadata/v1_5_no_road_manifest.json`.
-- ZIP SHA-256: `da380c406d04696cf988cc6f6000ab8f21b6f0ebb40e6ffe0763d942e98dbf21`.
+- ZIP SHA-256: `61e22c9f48fd77d7c68d543727a59f1ad1eb4c035994aec1437ef8baae661426`.
 - Reserved dataset DOI: `10.5281/zenodo.21711838`.
