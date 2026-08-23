@@ -1,6 +1,6 @@
 # Reproducible workflow for the 1 km rural-income dataset of China, 2019–2023
 
-Current formal release: **v1.5-no-road**.
+Current formal peer-review release: **v1.5.3-no-road**.
 
 This repository contains the code, configuration and documentation used to generate and technically validate a 1 km gridded dataset of rural residents' per capita disposable income in mainland China for 2019–2023.
 
@@ -79,9 +79,9 @@ The Stage 17–18 reconciliation scripts document how selected official-yearbook
 
 ## Training-label provenance and pending-value sensitivity
 
-The public-safe provenance index maps all 8,373 county-year training records to 95 source items without redistributing county income values. Forty source items have an exact table or page-level locator and 55 are transparently identified by the available bibliographic title or local source name because a more precise locator could not be recovered. Of the 8,373 records, 7,840 have completed county-name and numeric verification and 533 remain flagged as pending numeric verification.
+The public-safe provenance index maps all 8,373 county-year training records to 95 source items without redistributing county income values. All 95 source items now provide an exact table or section locator, and 40 also provide a URL. Of the 8,373 records, 7,933 have completed county-name and numeric verification (94.75%) and 440 remain flagged as pending numeric verification (5.25%). The v2.5 concentrated completion pass newly verified 93 records without changing any training value.
 
-A fixed-fold sensitivity analysis excluded those 533 records from fitting and evaluated both variants on the same 7,753 verified observations with valid pixel panels. Relative to the all-label baseline, R² changed by -0.0099 and MAPE by +0.183 percentage points; paired predictions correlated at r = 0.99787. Aggregate evidence is stored under `docs/validation/v1.5_no_road/pending_533/`, and the public-safe source crosswalk is under `docs/provenance/v2.4/`.
+A previously frozen fixed-fold sensitivity analysis excluded all 533 records that were pending before the v2.5 completion pass and evaluated both variants on the same 7,753 verified observations with valid pixel panels. This is retained as a conservative test because it removes a superset of the 440 records still pending. Relative to the all-label baseline, R² changed by -0.0099 and MAPE by +0.183 percentage points; paired predictions correlated at r = 0.99787. Aggregate evidence is stored under `docs/validation/v1.5_no_road/pending_533/`, and the current public-safe source crosswalk is under `docs/provenance/v2.5/`.
 
 ## County-uniform baseline and parameter sensitivity
 
@@ -95,7 +95,7 @@ The corresponding formal frozen gridded-data package has been deposited in a res
 
 `https://doi.org/10.5281/zenodo.21711838`
 
-The final peer-review package contains 156 files, including 67 GeoTIFFs and aggregate evidence for multi-year leave-province validation, province-year-constrained diagnostics, training-label sensitivity, the county-uniform baseline, parameter sensitivity and the administrative-boundary reproducibility disclosure. The frozen ZIP is named `china_rural_income_1km_2019_2023_v1.5-no-road.zip` and has SHA-256 `61e22c9f48fd77d7c68d543727a59f1ad1eb4c035994aec1437ef8baae661426`. The DOI will be registered and the record made public when the Zenodo draft is formally published.
+The final peer-review package contains 156 files, including 67 GeoTIFFs and aggregate evidence for multi-year leave-province validation, province-year-constrained diagnostics, training-label sensitivity, the county-uniform baseline, parameter sensitivity and the administrative-boundary reproducibility disclosure. Its directory breakdown is 70 files under `data/`, 46 under `tables/`, 36 under `metadata/` and four at the package root. The formal manifest records 155 files excluding itself; including the manifest, the package contains 156 files. The frozen ZIP is named `china_rural_income_1km_2019_2023_v1.5.3-no-road.zip` and has SHA-256 `aa18b2a5c14b4151a4a5cba1a2f4b07ef31b29c3521b09f93c4351ea881c06e6`. The DOI will be registered and the record made public when the Zenodo draft is formally published.
 
 ## Licence and citation
 
