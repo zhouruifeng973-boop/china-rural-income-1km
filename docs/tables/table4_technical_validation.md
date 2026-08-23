@@ -9,4 +9,4 @@
 | 2019–2023 five-fold GroupKFold by province, no-road, before calibration | 8,275 | 0.398 | 3,661.4 | 5,194.3 | 19.64% | -894.5 |
 | 2019–2023 five-fold GroupKFold by province, no-road, after operational province-year calibration | 8,275 | 0.678 | 2,859.3 | 3,798.6 | 15.93% | -420.6 |
 
-Sources: `docs/validation/v1.5_no_road/` and the aggregate validation tables in the v1.5 release candidate. The after-calibration row is a final-product workflow diagnostic, not fully independent validation.
+Sources: `docs/validation/v1.5_no_road/` and the aggregate validation tables in the formal v1.5 no-road package. The after-calibration row is a final-product workflow diagnostic, not fully independent validation.

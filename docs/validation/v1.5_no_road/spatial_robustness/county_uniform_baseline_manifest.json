@@ -1,0 +1,22 @@
+{
+  "experiment": "county_uniform_baseline_v1.5_no_road",
+  "canonical_maps": "outputs/sensitivity_no_road_v1_4/stage5_final_maps",
+  "canonical_map_hashes": {
+    "2019": "6a2624a73da747d5515753b0b9d29d2af4a7e83561ceb3122baa6c7cebdfd334",
+    "2020": "02507f26e05e0bafb012b35df139f3744ef9de1d0d7c1b30ec16da7ae80170b7",
+    "2021": "d82bc961f35edd0f1f744ed2c42e3269cbb3756cdfdba57b7219cc565fa37a1f",
+    "2022": "a2bb9350f4a1667b2376f21a7a64a1b94489019b9d7f51c6433cb9d909ae0f11",
+    "2023": "1be22db696436ef68e1fa4fee1670fddb211a29fb90170edb2376fbb12cd9ec7"
+  },
+  "definition": "Each valid rural pixel receives the population-weighted county mean of the canonical v1.5-no-road product. County means are preserved exactly.",
+  "interpretation": "Descriptive null surface for within-county spatial information; not an independent pixel-accuracy benchmark.",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+  ],
+  "road_density_used": false,
+  "county_level_detail_or_baseline_rasters_for_public_release": false
+}

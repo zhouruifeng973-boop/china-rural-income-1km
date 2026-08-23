@@ -1,0 +1,20 @@
+{
+  "n": 8275,
+  "r2": 0.41961035458751395,
+  "mae": 3598.0879643244903,
+  "rmse": 5101.856075776462,
+  "mape": 19.24659718935727,
+  "bias": -881.6646730433346,
+  "variant": "regularization_0p001_pixels256",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+  ],
+  "folds": 5,
+  "pixels_per_county": 256,
+  "output_regularization": 0.001,
+  "road_density_used": false
+}

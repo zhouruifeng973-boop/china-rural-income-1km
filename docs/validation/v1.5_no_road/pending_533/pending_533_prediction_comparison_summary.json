@@ -1,0 +1,11 @@
+{
+  "common_verified_test_records": 7753,
+  "pearson_prediction_correlation": 0.9978723131080294,
+  "spearman_prediction_correlation": 0.998416233127276,
+  "mean_signed_difference_verified_only_minus_all": 28.18087021949166,
+  "mean_absolute_difference": 164.53667978050834,
+  "median_absolute_difference": 115.5571171874999,
+  "p95_absolute_difference": 447.9964624999998,
+  "max_absolute_difference": 7387.423578124999,
+  "mean_absolute_difference_percent_of_baseline_mean_prediction": 0.9333121691010826
+}

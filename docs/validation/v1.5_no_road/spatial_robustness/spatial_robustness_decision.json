@@ -1,0 +1,32 @@
+{
+  "experiment": "v1.5_no_road_spatial_robustness",
+  "county_uniform_baseline_is_accuracy_validation": false,
+  "parameter_variants": {
+    "regularization_0p0001_pixels128": {
+      "output_regularization": 0.0001,
+      "pixels_per_county": 128
+    },
+    "regularization_0p01_pixels128": {
+      "output_regularization": 0.01,
+      "pixels_per_county": 128
+    },
+    "regularization_0p001_pixels64": {
+      "output_regularization": 0.001,
+      "pixels_per_county": 64
+    },
+    "regularization_0p001_pixels256": {
+      "output_regularization": 0.001,
+      "pixels_per_county": 256
+    }
+  },
+  "checks": {
+    "maximum_absolute_delta_r2": 0.0212135016157191,
+    "maximum_absolute_delta_mape_points": 0.3983353890587793,
+    "minimum_annual_pixel_pearson": 0.8674424495432519,
+    "minimum_annual_pixel_spearman": 0.8703790208541925,
+    "minimum_median_county_within_spearman": 0.768707247112101,
+    "minimum_county_cv_pearson": 0.8807729536104484,
+    "minimum_change_map_spearman": 0.4655664497957
+  },
+  "interpretation_scope": "Robustness of county-level validation and within-county spatial patterns; not independent 1 km accuracy validation."
+}

@@ -1,0 +1,87 @@
+{
+  "experiment": "pending_533_county_training_label_sensitivity",
+  "config": "config/workflow_v1.5_no_road_core.json",
+  "config_sha256": "08e1532029f59d6dbf7b9989f2682cbb2d41e23ce5b4be82f27d004e380e2ced",
+  "provenance_index": "outputs/provenance_batch_20260822/county_training_label_provenance_index_v2.4_jiangsu_corrected.csv",
+  "provenance_index_sha256": "2c4bba81256a7d0a474f4cb7558d2382add32d609cd0d60d2b2cb107841a62cc",
+  "baseline_predictions_internal": "outputs/multiyear_leave_province_v1_5_no_road/multiyear_leave_province_2019_2023_strict_county_year_predictions.csv",
+  "baseline_predictions_sha256": "ff949a2288ed71e1317bf2c06df5ae60e479986ba9808148341720206df8d8cd",
+  "baseline_manifest": "outputs/multiyear_leave_province_v1_5_no_road/multiyear_leave_province_2019_2023_strict_manifest.json",
+  "baseline_manifest_sha256": "12bc3c74d24ed20332dc952822309f7b81aa08fc9a07a68e758b95edf1d89529",
+  "target_file_internal_not_redistributed": "data/corrections/county_income_2019_2023_deflated_official77_corrected_v4.csv",
+  "target_sha256": "b8d5b287d856c7c9a788bf50562237a2dafbdcf3b0ff67615b5581a0f574d622",
+  "total_labels": 8373,
+  "verified_labels": 7840,
+  "pending_labels_excluded_from_sensitivity_fit": 533,
+  "common_verified_test_records": 7753,
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+  ],
+  "mask": "strict",
+  "folds": 5,
+  "fold_assignments": [
+    {
+      "fold": 1,
+      "held_out_provinces": [
+        "吉林省",
+        "河北省",
+        "湖北省",
+        "甘肃省",
+        "陕西省"
+      ]
+    },
+    {
+      "fold": 2,
+      "held_out_provinces": [
+        "内蒙古自治区",
+        "河南省",
+        "海南省",
+        "福建省"
+      ]
+    },
+    {
+      "fold": 3,
+      "held_out_provinces": [
+        "云南省",
+        "宁夏回族自治区",
+        "广东省",
+        "江西省"
+      ]
+    },
+    {
+      "fold": 4,
+      "held_out_provinces": [
+        "安徽省",
+        "山东省",
+        "江苏省",
+        "浙江省"
+      ]
+    },
+    {
+      "fold": 5,
+      "held_out_provinces": [
+        "山西省",
+        "广西壮族自治区",
+        "贵州省",
+        "重庆市"
+      ]
+    }
+  ],
+  "pixels_per_county": 128,
+  "epochs": 150,
+  "learning_rate": 0.001,
+  "output_regularization": 0.001,
+  "excluded_features": [
+    "road_density"
+  ],
+  "random_seed_policy": {
+    "pixel_sampling": "42 + 50000 + year",
+    "model_fit": "42 + 27000 + fold"
+  },
+  "fixed_test_policy": "Both variants are scored on the same 7,753 source-verified county-year records with valid pixel panels. Pending records are excluded from scoring in both variants.",
+  "county_values_or_predictions_publicly_released": false
+}

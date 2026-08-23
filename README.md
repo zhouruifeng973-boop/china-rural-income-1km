@@ -77,13 +77,25 @@ The after-calibration result uses only the official province-year constraint ava
 
 The Stage 17–18 reconciliation scripts document how selected official-yearbook checks were applied without embedding the checked income values. They require non-redistributed local workbooks and correction tables. The public repository therefore supports method inspection and product auditing, while a complete from-raw-data rerun remains conditional on access to the restricted inputs.
 
+## Training-label provenance and pending-value sensitivity
+
+The public-safe provenance index maps all 8,373 county-year training records to 95 source items without redistributing county income values. Forty source items have an exact table or page-level locator and 55 are transparently identified by the available bibliographic title or local source name because a more precise locator could not be recovered. Of the 8,373 records, 7,840 have completed county-name and numeric verification and 533 remain flagged as pending numeric verification.
+
+A fixed-fold sensitivity analysis excluded those 533 records from fitting and evaluated both variants on the same 7,753 verified observations with valid pixel panels. Relative to the all-label baseline, R² changed by -0.0099 and MAPE by +0.183 percentage points; paired predictions correlated at r = 0.99787. Aggregate evidence is stored under `docs/validation/v1.5_no_road/pending_533/`, and the public-safe source crosswalk is under `docs/provenance/v2.4/`.
+
+## County-uniform baseline and parameter sensitivity
+
+The county-uniform baseline preserves every county's population-weighted mean while removing within-county variation. The canonical surface has a median within-county population-weighted coefficient of variation of 24.55–25.52% across 2019–2023. This quantifies the spatial structure added by the model but is not independent 1 km accuracy validation.
+
+The no-road workflow was rerun with output-regularisation coefficients of 0.0001, 0.001 and 0.01 and per-county pixel-sampling caps of 64, 128 and 256, using fixed province folds and random seeds. Across tested configurations, the maximum absolute change in R² was 0.0212 and the maximum absolute change in MAPE was 0.398 percentage points. Annual-map spatial agreement remained high, but within-county ordering and especially 2019–2023 change patterns were more sensitive to the pixel-sampling cap. These results support county-level robustness while requiring cautious interpretation of individual pixels and local change estimates. Public aggregate results and manifests are stored under `docs/validation/v1.5_no_road/spatial_robustness/`; variant rasters and county-level predictions are excluded.
+
 ## Data product
 
 The corresponding formal frozen gridded-data package has been deposited in a restricted Zenodo peer-review record under the following reserved DOI:
 
 `https://doi.org/10.5281/zenodo.21711838`
 
-The peer-review package contains 111 files, including 67 GeoTIFFs and the aggregate evidence supporting the multi-year leave-province and province-year-constrained product diagnostics. The DOI will be registered and the record made public when the Zenodo draft is formally published.
+The final peer-review package contains 155 files, including 67 GeoTIFFs and aggregate evidence for multi-year leave-province validation, province-year-constrained diagnostics, training-label sensitivity, the county-uniform baseline and parameter sensitivity. The frozen ZIP is named `china_rural_income_1km_2019_2023_v1.5-no-road.zip` and has SHA-256 `da380c406d04696cf988cc6f6000ab8f21b6f0ebb40e6ffe0763d942e98dbf21`. The DOI will be registered and the record made public when the Zenodo draft is formally published.
 
 ## Licence and citation
 

@@ -1,0 +1,12 @@
+﻿metric,records,share_of_all_records,definition
+total_records,8373,1.0,All county-year labels entering the final training data flow
+exact_source_item_records,8373,1.0,Records linked to a source_item_id in the public source catalogue
+value_verified_records_all,7840,0.9363430072853218,County name and numeric value verified against the linked source
+numeric_verification_pending_records,533,0.06365699271467813,Exact source mapped but record-level numeric verification remains pending
+status__exact_source_item_and_value_verified,57,0.00680759584378359,Count by source_verification_status in the public record index
+status__exact_source_item_mapped_value_not_individually_verified,33,0.003941239699032604,Count by source_verification_status in the public record index
+status__province_year_source_file_located,293,0.03499343126716828,Count by source_verification_status in the public record index
+status__record_county_found_value_pending,166,0.019825630001194316,Count by source_verification_status in the public record index
+status__record_value_match_ambiguous_county_pending,29,0.003463513674907441,Count by source_verification_status in the public record index
+status__record_value_verified,7783,0.9295354114415383,Count by source_verification_status in the public record index
+status__source_file_located_unextractable_pdf,12,0.0014331780723754925,Count by source_verification_status in the public record index

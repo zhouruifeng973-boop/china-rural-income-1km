@@ -1,0 +1,43 @@
+{
+  "version": "v1.5-no-road",
+  "config": "config/workflow_v1.5_no_road_core.json",
+  "config_sha256": "08e1532029f59d6dbf7b9989f2682cbb2d41e23ce5b4be82f27d004e380e2ced",
+  "canonical_target": "data/corrections/county_income_2019_2023_deflated_official77_corrected_v4.csv",
+  "canonical_map_root": "outputs/sensitivity_no_road_v1_4/stage5_final_maps",
+  "canonical_cv_predictions": "outputs/multiyear_leave_province_v1_5_no_road/multiyear_leave_province_2019_2023_strict_county_year_predictions.csv",
+  "canonical_cv_predictions_sha256": "ff949a2288ed71e1317bf2c06df5ae60e479986ba9808148341720206df8d8cd",
+  "canonical_fold_manifest_sha256": "12bc3c74d24ed20332dc952822309f7b81aa08fc9a07a68e758b95edf1d89529",
+  "excluded_features": [
+    "road_density"
+  ],
+  "canonical_configuration": {
+    "output_regularization": 0.001,
+    "pixels_per_county": 128
+  },
+  "variants": {
+    "regularization_0p0001_pixels128": {
+      "output_regularization": 0.0001,
+      "pixels_per_county": 128
+    },
+    "regularization_0p01_pixels128": {
+      "output_regularization": 0.01,
+      "pixels_per_county": 128
+    },
+    "regularization_0p001_pixels64": {
+      "output_regularization": 0.001,
+      "pixels_per_county": 64
+    },
+    "regularization_0p001_pixels256": {
+      "output_regularization": 0.001,
+      "pixels_per_county": 256
+    }
+  },
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+  ],
+  "public_release_policy": "Only aggregate summary tables, manifests and this decision record are added to the frozen package. Variant rasters and county-level tables remain internal."
+}

@@ -1,0 +1,75 @@
+{
+  "variant": "regularization_0p01_pixels128",
+  "config": "config/workflow_v1.5_no_road_core.json",
+  "config_sha256": "08e1532029f59d6dbf7b9989f2682cbb2d41e23ce5b4be82f27d004e380e2ced",
+  "canonical_fold_manifest": "outputs/multiyear_leave_province_v1_5_no_road/multiyear_leave_province_2019_2023_strict_manifest.json",
+  "canonical_fold_manifest_sha256": "12bc3c74d24ed20332dc952822309f7b81aa08fc9a07a68e758b95edf1d89529",
+  "fixed_fold_assignments": [
+    {
+      "fold": 1,
+      "held_out_provinces": [
+        "吉林省",
+        "河北省",
+        "湖北省",
+        "甘肃省",
+        "陕西省"
+      ]
+    },
+    {
+      "fold": 2,
+      "held_out_provinces": [
+        "内蒙古自治区",
+        "河南省",
+        "海南省",
+        "福建省"
+      ]
+    },
+    {
+      "fold": 3,
+      "held_out_provinces": [
+        "云南省",
+        "宁夏回族自治区",
+        "广东省",
+        "江西省"
+      ]
+    },
+    {
+      "fold": 4,
+      "held_out_provinces": [
+        "安徽省",
+        "山东省",
+        "江苏省",
+        "浙江省"
+      ]
+    },
+    {
+      "fold": 5,
+      "held_out_provinces": [
+        "山西省",
+        "广西壮族自治区",
+        "贵州省",
+        "重庆市"
+      ]
+    }
+  ],
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+  ],
+  "mask": "strict",
+  "pixels_per_county": 128,
+  "epochs": 150,
+  "learning_rate": 0.001,
+  "output_regularization": 0.01,
+  "excluded_features": [
+    "road_density"
+  ],
+  "random_seed_policy": {
+    "pixel_sampling": "42 + 50000 + year",
+    "model_fit": "42 + 27000 + fold"
+  },
+  "county_predictions_publicly_released": false
+}
