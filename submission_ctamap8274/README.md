@@ -1,105 +1,70 @@
-# CTAmap 8,274-record code candidate
+# CTAmap 8274 reproducibility workflow
 
-This is a local publication candidate, not a published or fully reproduced release.
-Data version: 20261119-ctamap8274. Reserved data DOI: 10.5281/zenodo.21711838.
-Code: MIT. Data and boundary licenses remain separate.
+Use this directory at the manuscript's fixed commit, not legacy root scripts.
+Data version: 20261119-ctamap8274; reserved DOI: 10.5281/zenodo.21711838.
+Code license: MIT. Data licenses are separate. Scientific products are unchanged.
 
-## Inputs
+## Input preparation
 
-Extract the corresponding Zenodo review package. Its final label table is
-training_labels/county_training_labels_8274.csv. Do not reconstruct the cohort
-from old predictions or apply the county recodes a second time.
-The package contains CTAmap boundary and grid metadata; use rebuild_county_id.py
-with --boundary, --grid, --output to create a NEW county-ID raster.
-Other required inputs are the prepared feature GeoTIFFs, yearly strict rural
-population weights and processed/province_income_2019_2023_deflated.csv.
-These inputs are NOT all included in the Zenodo product package.
-Feature filenames, band order and scaling are specified in prepare_public_panels.py.
-Python dependencies: numpy, pandas, rasterio, scikit-learn, torch, geopandas, affine;
-exact environment pinning and a fresh-environment installation test remain pending.
+Replace uppercase paths below. Outputs must be new files/directories.
 
-## Safe checks (replace CAPITALIZED path placeholders)
+1. Extract the review package as PACKAGE; use its final 8274-row training table.
+2. Rebuild county IDs:
 
-python check_submission_inputs.py --package PACKAGE
-python prepare_public_panels.py --package PACKAGE --features FEATURES --weights WEIGHTS --county-id COUNTY_ID
+```text
+python rebuild_county_id.py --boundary PACKAGE/reproducibility/boundary/T2021_county.gpkg --grid PACKAGE/reproducibility/boundary/grid.json --output FEATURES/county_id.tif
+```
 
-The second command only checks inputs by default. Add --prepare --output NEW_PANELS
-to build large panel files. It preserves the fixed labels and excludes roads.
+3. Run gee_export_features.js in Earth Engine after uploading the licensed
+boundary as your own asset and replacing YOUR_PROJECT. Start export tasks and
+download all feature files to EXPORTS. Source scaling is retained. Historical
+end-exclusive date cutoffs are preserved. Remote Earth Engine execution was not
+tested here; access authorization and upstream collection availability are required.
+4. Run gee_export_smod.js and obtain the raw 2020 smod_code export. Obtain the
+matching annual WorldPop population-count files specified in the archive's source
+documentation. Do not substitute population density or another product variant.
+5. Align features and build population weights (repeat weights for 2019–2023):
 
-python run_submission.py --stage validation --package PACKAGE --panels PANELS --features FEATURES --processed PROCESSED --output NEW_CHECK_DIR --check-parsers
-python run_submission.py --stage validation --package PACKAGE --panels PANELS --features FEATURES --processed PROCESSED --output NEW_SMOKE_DIR --smoke
+```text
+python prepare_inputs.py features --county-id FEATURES/county_id.tif --exports EXPORTS --output FEATURES
+python prepare_inputs.py weights --county-id FEATURES/county_id.tif --smod SMOD.tif --population WORLDPOP_2019.tif --year 2019 --output PROCESSED/rural_weights
+python prepare_inputs.py province --package PACKAGE --output PROCESSED/province_income_2019_2023_deflated.csv
+python prepare_public_panels.py --package PACKAGE --features FEATURES --weights PROCESSED/rural_weights --county-id FEATURES/county_id.tif --prepare --output PANELS
+```
 
-Parser checks exercise all four parsers and product paths. Smoke mode trains
-only two epochs on 4,096 pixels from partial county bags, writes test-only CSVs,
-and is NOT a scientific validation.
+Features use bilinear alignment; classification uses nearest neighbor; population
+counts use sum resampling, classes 11/12/13 and positive county IDs. Invalid or
+negative population is zeroed. Province conversion copies official targets from
+the five archived calibration tables, without re-deflation. Panel preparation
+applies source scaling once and writes 27 spatial columns; year is added later.
+County validation compares fresh boundary rasterization pixel by pixel, including
+grid/CRS/NoData, rather than requiring identical TIFF compression.
 
-Add --execute to run the selected full stage explicitly. Run validation,
-multiyear, core, products, and ensemble as separate commands, using the same
-output directory for core/products/ensemble. Existing stage outputs are rejected;
-there is no automatic overwrite or resume after a partial failure. Input path,
-label and frozen-parameter identity are checked across stages. Core must precede
-products and ensemble. A full stage can require substantial time, RAM and disk.
-This execution dispatch is implemented but has NOT yet passed a complete run.
-Ensemble inputs and output must be on the same filesystem drive for provenance
-reporting; differing drives fail rather than silently redirect output.
+## Training and products
 
-requirements_observed_windows_py311.txt records versions observed on the test
-machine. It is not a fully resolved dependency lock or a fresh-install guarantee.
-Do not run scripts directly using their historical default paths/configuration.
+```text
+python run_submission.py --stage validation --package PACKAGE --panels PANELS --features FEATURES --processed PROCESSED --output NEW_RUN --execute
+```
 
-## Quality and risk layers
+Repeat with stages multiyear, core, products, ensemble. Core precedes products
+and ensemble. Use the same NEW_RUN; existing stage outputs are rejected. Default
+mode only checks inputs. Ensemble reporting requires inputs/outputs on one drive.
+Additional adapters: run_auxiliary.py, create_bounded_changes.py,
+run_uniform_baseline.py and run_sensitivity.py; inspect --help for explicit paths.
+No existing national result is overwritten by default.
 
-python run_auxiliary.py --package PACKAGE --core CORE --features FEATURES --output NEW_AUXILIARY_OUTPUT
+## Independent software test
 
-This defaults to read-only checks of the frozen labels, required files and grids.
-Add --execute to generate 26 quality and 12 risk layers in a NEW directory.
-This auxiliary adapter has passed preflight only, not a complete output run.
-It does not generate county-uniform baseline maps or bounded change maps.
-Parameter-sensitivity orchestration is available through run_sensitivity.py.
-Supply --package --panels --features --processed --core --cv --config --output.
-The config must contain final_maps and multiyear_leave_province_validation
-settings matching the frozen baseline; parser-check workflow.json is suitable.
-Default mode checks the final label hash, cohort size, baseline settings and 21
-required input files. --execute runs four CV/map variants and their comparisons.
-The internal county-ID and population-weight comparison paths now use the
-explicit arguments. This adapter passed preflight only, not a full run.
-Decision-narrative generation is excluded from the sensitivity adapter.
+```text
+python -m venv .venv
+.venv/Scripts/python.exe -m pip install numpy==2.2.6 pandas==2.3.3 rasterio==1.4.4 scikit-learn==1.7.2 torch==2.9.1 geopandas==1.1.2
+.venv/Scripts/python.exe -m pip check
+.venv/Scripts/python.exe test_generated_pipeline.py --output NEW_TEST_DIRECTORY
+```
 
-## County-uniform baseline and bounded change maps
-
-python run_uniform_baseline.py --core CORE --county-id COUNTY_ID --weights WEIGHTS --output NEW_BASELINE_OUTPUT
-
-Default mode checks inputs and grids. --execute writes baseline maps and reads
-them back to verify county-constant values, NoData and population-weighted means
-(absolute tolerance 0.01 yuan). --years can select a subset. A cropped test passed
-for 2019 and 2023, not a full national rerun.
-
-python create_bounded_changes.py --first BOUNDED_2019 --last BOUNDED_2023 --output NEW_CHANGE_OUTPUT
-
-Default mode scans input grids, 3000–80000 bounds and common valid pixels.
---execute creates two float32 change maps, verifies formulas by readback and
-checks input hashes remain unchanged. The full-input preflight passed, with
-4,034,095 common valid pixels. This adapter has not yet executed an output test.
-
-## What has and has not been tested
-
-Passed locally: final package hashes/cohort; five-year grid and coverage checks;
-sampled feature equivalence; two-epoch numerical test; all stage parser wiring;
-cropped production calibration and change GeoTIFF readback.
-Not completed: execution of all stages through the portable launcher, full
-independent end-to-end reproduction, fresh-environment dependency validation,
-full execution of the auxiliary-quality and sensitivity adapters, GitHub publication.
-Historical development metadata legitimately records 8,275 units; final training
-uses 8,274. The frozen development hyperparameters are unchanged.
-
-Local tests and author machine paths are intentionally not bundled. No model,
-raw training table, geographic source data or anonymous-review token is copied.
-
-
-## Current test-status update (2026-11-21)
-
-See TEST_STATUS.md and candidate_status.json for the latest checks. Bounded
-change and quality/risk output functions now passed cropped execution tests;
-earlier preflight-only descriptions refer to the earlier preparation stage.
-Full national execution and clean-environment reproduction remain unverified.
-This directory is a candidate, not a claim that all submission blockers are closed.
+Tested with Windows CPython 3.11.9. The test generates source rasters, boundaries
+and labels from scratch; it does not load author panels or trained models.
+It exercises 150-epoch training, five-year prediction, calibration, changes,
+leave-year/province functions and five-member ensemble. See TEST_STATUS.md.
+Synthetic metrics are not scientific evidence. Full national CLI reproduction,
+remote exports and the complete sensitivity launcher remain unverified.

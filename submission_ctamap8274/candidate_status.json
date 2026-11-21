@@ -3,11 +3,12 @@
   "publication_ready": false,
   "full_execution_enabled": true,
   "full_stage_execution_tested": false,
-  "fresh_environment_tested": false,
+  "fresh_environment_tested": true,
+  "generated_synthetic_pipeline_passed": true,
   "cropped_quality_risk_passed": true,
   "cropped_bounded_change_passed": true,
   "cropped_baseline_passed": true,
   "sensitivity_preflight_passed": true,
   "sensitivity_full_execution_tested": false,
-  "environment_note": "Global pip check reports unrelated face-recognition requiring missing dlib; no clean-environment certification"
+  "environment_note": "Independent Windows Python 3.11 venv installed; pip check passed. Synthetic production-function integration passed; full national CLI reproduction remains untested."
 }

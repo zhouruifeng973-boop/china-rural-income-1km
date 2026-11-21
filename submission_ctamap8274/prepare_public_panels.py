@@ -11,6 +11,31 @@ NAMES=[n for _,names in GROUPS for n in names]
 SCALE={'ndvi_mean','ndvi_max','ndvi_std','evi_mean','npp','B2','B3','B4','B8'}
 def sha(p):
  with open(p,'rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
+
+def build_panel(features, weights, county_id, codes, year):
+ """Shared production/demo extraction, row-major order and source scaling."""
+ with ExitStack() as stack:
+  ref=stack.enter_context(rasterio.open(county_id)); county=ref.read(1)
+  wsrc=stack.enter_context(rasterio.open(weights/f'rural_pop_weight_{year}_strict.tif'))
+  specs=[(stack.enter_context(rasterio.open(features/f.format(y=year))),names) for f,names in GROUPS]
+  for src,names in [(wsrc,['weight'])]+specs:
+   if src.shape!=ref.shape or src.transform!=ref.transform or src.crs!=ref.crs or src.count!=len(names):
+    raise ValueError(f'Grid/bands mismatch: {src.name}')
+  w=wsrc.read(1); mask=np.isfinite(w)&(w>0)&np.isin(county,codes)
+  if set(np.unique(county[mask]))!=set(codes):raise ValueError('Missing positive-weight counties')
+  X=np.empty((int(mask.sum()),len(NAMES)),dtype='float32');offset=0
+  for start in range(0,ref.height,128):
+   h=min(128,ref.height-start);take=mask[start:start+h].ravel();n=int(take.sum())
+   if not n:continue
+   columns=[]
+   for src,names in specs:
+    for band,name in enumerate(names,1):
+     arr=src.read(band,window=Window(0,start,ref.width,h)).astype('float32')
+     if src.nodata is not None:arr[arr==src.nodata]=np.nan
+     if name in SCALE:arr*=np.float32(.0001)
+     columns.append(arr.ravel()[take])
+   X[offset:offset+n]=np.column_stack(columns);offset+=n
+ return dict(X=X,codes=county[mask],weights=w[mask],band_names=np.array(NAMES))
 def main():
  p=argparse.ArgumentParser(description=__doc__)
  for n in ['package','features','weights','county-id']:p.add_argument('--'+n,type=Path,required=True)
@@ -25,9 +50,8 @@ def main():
   shape=ref.shape;transform=ref.transform;crs=ref.crs;county=ref.read(1)
  if shape!=(grid['height'],grid['width']) or not np.allclose(tuple(transform)[:6],grid['transform'],rtol=0,atol=1e-12) or crs!=rasterio.crs.CRS.from_string(grid['crs']):raise ValueError('County grid differs')
  # Header equality alone cannot establish county attribution equivalence.
- reference=package/'reproducibility/boundary/rebuild_verification.json'
- valid_hashes={'90befebebfe82b13c67e715ac2adbc3e0d604220493fd3cb723ee42f394d6b30','fc4d22bd53f5574742df893e5b4bf53a594239f37ff7a90584ae51d58afa6947'}
- if sha(a.county_id) not in valid_hashes:raise ValueError('County-ID encoding not audited; independently compare reconstructed pixel values first')
+ from check_county_content import check
+ county_audit=check(a.county_id,package/'reproducibility/boundary/T2021_county.gpkg',package/'reproducibility/boundary/grid.json')
  report=[]
  for y in range(2019,2024):
   codes=np.array([int(r['county_code']) for r in rows if int(r['year'])==y])
@@ -44,24 +68,8 @@ def main():
   a.output.mkdir(parents=True,exist_ok=False)
   for rec in report:
    y=rec['year']; codes=np.array([int(r['county_code']) for r in rows if int(r['year'])==y])
-   with ExitStack() as stack:
-    wsrc=stack.enter_context(rasterio.open(a.weights/f'rural_pop_weight_{y}_strict.tif'));w=wsrc.read(1)
-    mask=np.isfinite(w)&(w>0)&np.isin(county,codes)
-    specs=[(stack.enter_context(rasterio.open(a.features/f.format(y=y))),names) for f,names in GROUPS]
-    X=np.empty((rec['rural_pixels'],27),dtype='float32');offset=0
-    for start in range(0,shape[0],128):
-     h=min(128,shape[0]-start);take=mask[start:start+h].ravel();n=int(take.sum())
-     if not n:continue
-     columns=[]
-     for s,names in specs:
-      for b,name in enumerate(names,1):
-       arr=s.read(b,window=Window(0,start,shape[1],h)).astype('float32')
-       if s.nodata is not None:arr[arr==s.nodata]=np.nan
-       if name in SCALE:arr*=np.float32(.0001)
-       columns.append(arr.ravel()[take])
-     X[offset:offset+n]=np.column_stack(columns);offset+=n
-    if offset!=len(X):raise ValueError('Pixel count mismatch')
-    np.savez(a.output/f'{y}.npz',X=X,codes=county[mask],weights=w[mask],band_names=np.array(NAMES))
+   panel=build_panel(a.features,a.weights,a.county_id,codes,y)
+   np.savez(a.output/f'{y}.npz',**panel)
   (a.output/'prepare_complete.json').write_text(json.dumps(dict(years=report,features=NAMES,label_sha256=sha(label)),indent=2),encoding='utf-8')
  print(json.dumps(dict(preflight_passed=True,training_started=False,panels_written=a.prepare,spatial_features=len(NAMES),years=report),indent=2))
 if __name__=='__main__':main()

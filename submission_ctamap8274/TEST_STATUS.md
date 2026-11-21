@@ -1,21 +1,20 @@
-# Test status and remaining work
+# Test status 2026-11-21
 
-Candidate date: 2026-11-21. This branch is not a fully reproduced final release.
+Independent Windows CPython 3.11 venv installed without system site packages.
+pip check passed. Newly generated synthetic data: 20 counties, five provinces,
+five years, 100 county-year units, 27 predictors plus year, 128/64 MLP, 150 epochs.
 
-Passed: package hashes and 8,274-label cohort; five-year input grids and counts;
-first 4,096 valid training pixels/year feature/weight/code equivalence; a two-epoch
-partial-bag test via the new launcher; four parser configurations; cropped
-calibration, unbounded changes and GeoTIFF readback; cropped county-uniform
-baseline (maximum persisted county-mean difference below 0.001 yuan); cropped
-bounded changes; five-year cropped quality/risk generation (26 + 12 GeoTIFF).
-Four-variant sensitivity input preflight passed. No full variant was rerun.
+Passed: feature alignment, population weighting, province CSV conversion, panel
+creation, legacy/new feature compatibility, missing-feature rejection, county
+encoding equivalence and wrong-pixel rejection, final model fit/save/reload,
+five annual predictions, calibrated weighted means (0.01 yuan readback tolerance),
+NoData, change-map writing, five leave-year folds, five single-year province folds,
+five multi-year province folds, five ensemble models and 15 ensemble rasters.
 
-Not completed: independent fresh environment, all full stages through the new
-launcher, full national reproduction and sensitivity execution. Source feature
-and population preprocessing is still required externally. See README Inputs.
-Global pip check reported face-recognition requires dlib. These packages are not
-used by this workflow; the conflict was not repaired by changing the user's
-environment. The observed dependency file is not a complete environment lock.
+Actual-input checks: rebuilt CTAmap has zero different county pixels; public
+province tables convert to 155 rows. Earlier cropped quality/risk and bounded
+change adapter tests passed. Synthetic outputs do not replace scientific results.
 
-No test metrics from partial county bags or cropped maps belong in the paper.
-The existing scientific results, manuscript and Zenodo ZIP were not modified.
+Not established: remote Earth Engine execution, historical source byte identity,
+full national CLI reproduction, or clean-environment four-variant sensitivity
+orchestration. This is production-function integration, not full reproduction.
