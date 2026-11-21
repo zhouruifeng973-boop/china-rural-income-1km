@@ -1,0 +1,13 @@
+{
+  "version": "20261121-ctamap8274-candidate",
+  "publication_ready": false,
+  "full_execution_enabled": true,
+  "full_stage_execution_tested": false,
+  "fresh_environment_tested": false,
+  "cropped_quality_risk_passed": true,
+  "cropped_bounded_change_passed": true,
+  "cropped_baseline_passed": true,
+  "sensitivity_preflight_passed": true,
+  "sensitivity_full_execution_tested": false,
+  "environment_note": "Global pip check reports unrelated face-recognition requiring missing dlib; no clean-environment certification"
+}

@@ -1,0 +1,61 @@
+{
+  "purpose": "Frozen MLP hyperparameters selected during fixed-fold leave-county development",
+  "selected_configuration": "larger_network",
+  "parameters": {
+    "pixels_per_unit": 128,
+    "epochs": 150,
+    "lr": 0.001,
+    "hidden1": 128,
+    "hidden2": 64,
+    "dropout": 0.05,
+    "output_regularization": 0.001
+  },
+  "folds": 5,
+  "fold_assignment_sha256": "bf58d96a077a31225f6c197af9d30ad39b7b0f382fc29cda67707700ce75b750",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+  ],
+  "n_county_year_units": 8275,
+  "n_counties": 1731,
+  "features": [
+    "ntl",
+    "ndvi_mean",
+    "ndvi_max",
+    "ndvi_std",
+    "evi_mean",
+    "npp",
+    "tree_frac",
+    "shrub_frac",
+    "grass_frac",
+    "crop_frac",
+    "built_frac",
+    "bare_frac",
+    "water_frac",
+    "wetland_frac",
+    "dem",
+    "slope",
+    "aspect",
+    "temp_mean",
+    "precip_sum",
+    "solar_mean",
+    "B2",
+    "B3",
+    "B4",
+    "B8",
+    "ndvi_s2",
+    "ndwi",
+    "ndbi",
+    "year_scaled"
+  ],
+  "excluded_features": [
+    "road_density"
+  ],
+  "selection_rule": "Eligible configurations require non-negative R2 in every fold. Among configurations within r2_tolerance of the best mean fold R2, select lowest R2 SD, then lowest mean MAPE and MAPE SD.",
+  "r2_tolerance": 0.01,
+  "development_only": true,
+  "note": "Use this frozen configuration for subsequent leave-year/leave-province validation before final all-label training."
+}
